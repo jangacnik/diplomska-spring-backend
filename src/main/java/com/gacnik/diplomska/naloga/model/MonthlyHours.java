@@ -9,7 +9,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
-@Document
+@Document(collection = "monthlyHours")
 @Getter
 @Setter
 public class MonthlyHours {
@@ -24,7 +24,6 @@ public class MonthlyHours {
 
 
     public MonthlyHours(String employeeUuid, int totalWorkTime, int totalSickLeaveTime, int totalLeaveTime, int totalTime) {
-        this.uuid = UuidGenerator.generateUuid();
         this.employeeUuid = employeeUuid;
         this.totalWorkTime = totalWorkTime;
         this.totalSickLeaveTime = totalSickLeaveTime;
