@@ -4,10 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
@@ -18,11 +15,9 @@ import java.util.Date;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class DateDuration {
-    @JsonFormat(pattern = "dd/MM/yyyy@HH:mm:ss")
-    @DateTimeFormat(pattern = "dd/MM/yyyy@HH:mm:ss")
-    private Date startDate;
-    @JsonFormat(pattern = "dd/MM/yyyy@HH:mm:ss")
-    @DateTimeFormat(pattern = "dd/MM/yyyy@HH:mm:ss")
-    private Date endDate;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime startDate;
+    private long numberOfDays;
 }

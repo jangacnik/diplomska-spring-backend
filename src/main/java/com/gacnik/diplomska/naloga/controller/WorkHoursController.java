@@ -7,6 +7,7 @@ import com.gacnik.diplomska.naloga.model.DateDuration;
 import com.gacnik.diplomska.naloga.model.WorkHourType;
 import com.gacnik.diplomska.naloga.model.WorkHours;
 import com.gacnik.diplomska.naloga.service.WorkHoursService;
+import com.gacnik.diplomska.naloga.util.WorkHoursUtils;
 import com.google.gson.Gson;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 
 @RestController
@@ -22,7 +24,6 @@ import java.util.Locale;
 @Log4j2
 public class WorkHoursController {
 
-    private final Gson gson;
     private final WorkHoursService workHoursService;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -37,9 +38,18 @@ public class WorkHoursController {
         return workHoursService.endEntry(uuid);
     }
 
-    @PostMapping(value = "/sick")
-    public void addSickLeave(@RequestBody DateDuration dateDuration) {
-        log.error(dateDuration.getEndDate());
-        log.error(dateDuration.getStartDate());
+    @PostMapping(value = "/sick/duration/{uuid}")
+    public void addSickLeave(@RequestBody String dateDuration, @PathVariable String uuid) throws JsonProcessingException {
+        log.warn(dateDuration);
+        List<WorkHours> listOfWorkHours = WorkHoursUtils.getDatesFromDuration(dateDuration, uuid, WorkHourType.SICK_LEAVE);
+        workHoursService.addSickLeaveAsDuration(listOfWorkHours);
     }
+
+    @PostMapping(value = "/vacation/duration/{uuid}")
+    public void addLeave(@RequestBody String dateDuration, @PathVariable String uuid) throws JsonProcessingException {
+        log.warn(dateDuration);
+        List<WorkHours> listOfWorkHours = WorkHoursUtils.getDatesFromDuration(dateDuration, uuid, WorkHourType.LEAVE);
+        workHoursService.addSickLeaveAsDuration(listOfWorkHours);
+    }
+
 }
