@@ -1,7 +1,5 @@
 package com.gacnik.diplomska.naloga.model;
 
-import com.gacnik.diplomska.naloga.util.UuidGenerator;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;

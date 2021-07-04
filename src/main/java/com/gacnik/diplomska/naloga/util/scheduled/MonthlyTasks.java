@@ -1,4 +1,4 @@
-package com.gacnik.diplomska.naloga.util;
+package com.gacnik.diplomska.naloga.util.scheduled;
 
 import lombok.experimental.UtilityClass;
 import org.springframework.scheduling.annotation.EnableScheduling;

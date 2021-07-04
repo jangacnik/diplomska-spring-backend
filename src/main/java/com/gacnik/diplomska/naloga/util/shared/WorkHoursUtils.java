@@ -1,4 +1,4 @@
-package com.gacnik.diplomska.naloga.util;
+package com.gacnik.diplomska.naloga.util.shared;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,10 +24,6 @@ public class WorkHoursUtils {
         for(int i = 0; i < durationTmp.getNumberOfDays(); i++){
             workHours.add(new WorkHours(uuid, durationTmp.getStartDate().plusDays(i), durationTmp.getStartDate().plusDays(i), workHourType, 8));
         }
-        //log.warn("Days : " + numberOfDays);
-        //log.warn("Days :  " + Duration.between(durationTmp.getStartDate(), durationTmp.getEndDate()).toDays());
-        // durationTmp.getStartDate().until(durationTmp.getEndDate(), ChronoUnit.DAYS);
-        //log.error("List: "+workHours);
         return workHours;
     }
 

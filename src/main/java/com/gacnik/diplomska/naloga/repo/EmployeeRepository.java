@@ -8,7 +8,7 @@ import java.util.Optional;
 
 
 public interface EmployeeRepository extends MongoRepository<Employee, String> {
-    Optional<Employee>findEmployeeByEmailOrPhone(String email, String phone);
+    Optional<Employee>findFirstEmployeeByEmailOrPhone(String email, String phone);
     Optional<Employee>findEmployeeByDeviceIdContaining(List<String> ids);
     List<Employee>findEmployeesByNameContaining(String name);
     List<Employee>findEmployeesBySurnameContaining(String surname);

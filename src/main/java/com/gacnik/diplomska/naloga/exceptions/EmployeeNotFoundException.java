@@ -1,7 +1,7 @@
 package com.gacnik.diplomska.naloga.exceptions;
 
 public class EmployeeNotFoundException extends RuntimeException{
-    public EmployeeNotFoundException(String uuid) {
-        super("Could not find employee " + uuid);
+    public EmployeeNotFoundException(String msg) {
+        super("Could not find employee with " + msg);
     }
 }

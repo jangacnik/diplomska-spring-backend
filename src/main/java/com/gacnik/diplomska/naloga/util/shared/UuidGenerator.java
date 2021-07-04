@@ -1,4 +1,4 @@
-package com.gacnik.diplomska.naloga.util;
+package com.gacnik.diplomska.naloga.util.shared;
 
 import lombok.experimental.UtilityClass;
 

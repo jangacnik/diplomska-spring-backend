@@ -1,14 +1,11 @@
 package com.gacnik.diplomska.naloga.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.gacnik.diplomska.naloga.util.UuidGenerator;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Data
 @Document(collection = "workHours")
