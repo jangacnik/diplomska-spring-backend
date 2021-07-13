@@ -25,32 +25,39 @@ public class EmployeeController {
 
     private final EmployeeService employeeService;
 
-
+    //pridobi vse delavce
     @GetMapping("/all")
     public ResponseEntity<List<Employee>> fetchAllEmployees() {
         return new ResponseEntity<>(employeeService.getAllEmployees(), HttpStatus.OK);
     }
 
+    // najdi se delavce z imenom
     @GetMapping("/name/{name}")
     public ResponseEntity<List<Employee>>fetchEmployeeByName(@PathVariable String name){
         return new ResponseEntity<>(employeeService.getEmployeesByName(name), HttpStatus.FOUND);
     }
+
+    // najdi vse delavce s priimkom
     @GetMapping("/surname/{surname}")
     public ResponseEntity<List<Employee>> fetchEmployeeBySurname(@PathVariable String surname){
         return new ResponseEntity<>(employeeService.getEmployeesBySurname(surname), HttpStatus.FOUND);
     }
 
+    // najdi delvca po uuid
     @GetMapping("/uuid/{uuid}")
     public ResponseEntity<Employee> fetchEmployeeByUuid(@PathVariable String uuid){
         return new ResponseEntity<>(employeeService.getEmployeeById(uuid),  HttpStatus.FOUND);
     }
 
+    // dodajanje novih delavcev
     @PostMapping(value = "/new",consumes = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> addNewEmployee(@RequestBody Employee employee) {
 
         return new ResponseEntity<Employee>(employeeService.addNewEmployee(employee), HttpStatus.CREATED);
     }
 
+
+    // posodabljenje delavcev
     @PutMapping(value = "/update", consumes = "application/json")
     public ResponseEntity<Employee> updateEmployeeInfo(@RequestBody Employee changes) {
             return new ResponseEntity<>(
@@ -58,8 +65,22 @@ public class EmployeeController {
 
     }
 
+
+    // odstranjevanje delavcev
     @DeleteMapping("/delete/{uuid}")
     public ResponseEntity<String> deleteEmployeeById(@PathVariable String uuid){
         return new ResponseEntity<>(employeeService.deleteEmployee(uuid), HttpStatus.ACCEPTED);
+    }
+
+
+    //dodajanje naprav
+    @PostMapping(value = "/add/device")
+    public ResponseEntity<String> addNewDevice(){
+        return new ResponseEntity<>("",HttpStatus.OK);
+    }
+    //odstranjevanje naprav
+    @DeleteMapping(value = "/delete/device")
+    public ResponseEntity<String> deleteDevice() {
+        return new ResponseEntity<>("", HttpStatus.OK);
     }
 }
