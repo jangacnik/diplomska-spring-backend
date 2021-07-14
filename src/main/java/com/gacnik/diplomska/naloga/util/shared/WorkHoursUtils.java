@@ -8,6 +8,9 @@ import com.gacnik.diplomska.naloga.model.WorkHours;
 import lombok.experimental.UtilityClass;
 import lombok.extern.log4j.Log4j2;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +28,10 @@ public class WorkHoursUtils {
             workHours.add(new WorkHours(uuid, durationTmp.getStartDate().plusDays(i), durationTmp.getStartDate().plusDays(i), workHourType, 8));
         }
         return workHours;
+    }
+
+    public long calculateWorkTime(LocalDateTime start, LocalDateTime end){
+        return ChronoUnit.MINUTES.between(start, end);
     }
 
 }

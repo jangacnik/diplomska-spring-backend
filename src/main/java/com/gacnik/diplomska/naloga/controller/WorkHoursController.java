@@ -23,7 +23,6 @@ import java.util.List;
 public class WorkHoursController {
 
     private final WorkHoursService workHoursService;
-    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @PostMapping(value = "/new/{uuid}/{type}")
     public ResponseEntity<String> addNewEntry(@PathVariable String uuid, @PathVariable WorkHourType type) {
@@ -63,7 +62,7 @@ public class WorkHoursController {
     }
 
     @PostMapping(value = "/today/log")
-    public ResponseEntity<String> logHoursOfCurrentDay(@RequestBody WorkhourLog[] logs){
-        return new ResponseEntity<>("", HttpStatus.OK);
+    public ResponseEntity<List<WorkHours>> logHoursOfCurrentDay(@RequestBody WorkhourLog[] logs){
+        return new ResponseEntity<>(workHoursService.addTodaysLogs(logs), HttpStatus.OK);
     }
 }

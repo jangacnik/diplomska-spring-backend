@@ -51,4 +51,6 @@ public class WorkHours {
         this.workHourType = workHourType;
         this.totalTime = totalTime;
     }
+
+
 }

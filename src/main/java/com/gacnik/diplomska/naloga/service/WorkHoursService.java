@@ -3,13 +3,18 @@ package com.gacnik.diplomska.naloga.service;
 import com.gacnik.diplomska.naloga.exceptions.EmployeeNotFoundException;
 import com.gacnik.diplomska.naloga.model.WorkHourType;
 import com.gacnik.diplomska.naloga.model.WorkHours;
+import com.gacnik.diplomska.naloga.model.WorkhourLog;
 import com.gacnik.diplomska.naloga.repo.WorkHoursRepository;
+import com.gacnik.diplomska.naloga.util.shared.Constants;
+import com.gacnik.diplomska.naloga.util.shared.WorkHoursUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
+import java.sql.Array;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -27,9 +32,7 @@ public class WorkHoursService {
         WorkHours workHours = workHoursRepository.findById(uuid).orElseThrow(() -> new EmployeeNotFoundException(uuid)
         );
         workHours.setEndTime(LocalDateTime.now());
-        long timeDiff = ChronoUnit.MINUTES.between(workHours.getStartTime(), workHours.getEndTime());
-                //Math.abs(workHours.getEndTime().get()-workHours.getStartTime().getTime());
-        workHours.setTotalTime(timeDiff);
+        workHours.setTotalTime(WorkHoursUtils.calculateWorkTime(workHours.getStartTime(), workHours.getEndTime()));
         return workHoursRepository.save(workHours);
     }
 
@@ -39,6 +42,26 @@ public class WorkHoursService {
     }
 
     public void addLeaveToday(String uuid, WorkHourType type) {
-        workHoursRepository.insert(new WorkHours(uuid, LocalDateTime.now(), LocalDateTime.now(), type, 480));
+        workHoursRepository.insert(new WorkHours(uuid, LocalDateTime.now(), LocalDateTime.now(), type, Constants.NORMAL_WORK_TIME));
+    }
+
+    public List<WorkHours> addTodaysLogs(WorkhourLog[] hours){
+        List<WorkHours> employeeList = new ArrayList<WorkHours>();
+        for (WorkhourLog workHour: hours
+             ) {
+            employeeList.add(workHoursRepository.insert(
+                    new WorkHours(
+                            workHour.getEmployeeUuid(),
+                            workHour.getStartTime(),
+                            workHour.getLastPing(),
+                            WorkHourType.WORK,
+                            WorkHoursUtils.calculateWorkTime(workHour.getStartTime(), workHour.getLastPing())
+                        )
+                    )
+            );
+
+
+        }
+        return employeeList;
     }
 }

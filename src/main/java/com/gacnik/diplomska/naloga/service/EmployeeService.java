@@ -24,8 +24,6 @@ public class EmployeeService {
     private final EmployeeRepository employeeRepository;
     private final Validator validator;
 
-    private final ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES, false);
-
     public List<Employee> getAllEmployees() {
         return employeeRepository.findAll();
     }
