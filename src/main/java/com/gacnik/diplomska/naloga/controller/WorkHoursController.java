@@ -65,4 +65,16 @@ public class WorkHoursController {
     public ResponseEntity<List<WorkHours>> logHoursOfCurrentDay(@RequestBody WorkhourLog[] logs){
         return new ResponseEntity<>(workHoursService.addTodaysLogs(logs), HttpStatus.OK);
     }
+
+    // put for edit
+
+    // delete for deletion by id
+
+    // get for workhours by employee
+
+    // get for workhoours by employee between dates
+
+    // get for workhours by employe in specific month
+
+
 }
