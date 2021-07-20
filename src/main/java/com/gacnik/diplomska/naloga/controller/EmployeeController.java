@@ -74,13 +74,15 @@ public class EmployeeController {
 
 
     //dodajanje naprav
-    @PostMapping(value = "/add/device")
-    public ResponseEntity<String> addNewDevice(){
-        return new ResponseEntity<>("",HttpStatus.OK);
+    @PostMapping(value = "/add/device/{uuid}")
+    public ResponseEntity<String> addNewDevice(@PathVariable String uuid, @RequestBody String deviceId){
+        employeeService.addDevice(uuid, deviceId);
+        return new ResponseEntity<>(null,HttpStatus.OK);
     }
     //odstranjevanje naprav
-    @DeleteMapping(value = "/delete/device")
-    public ResponseEntity<String> deleteDevice() {
-        return new ResponseEntity<>("", HttpStatus.OK);
+    @DeleteMapping(value = "/delete/device/{uuid}")
+    public ResponseEntity<String> deleteDevice(@PathVariable String uuid, @RequestBody String deviceId) {
+        employeeService.deleteDevice(uuid, deviceId);
+        return new ResponseEntity<>(null, HttpStatus.OK);
     }
 }

@@ -1,6 +1,8 @@
 package com.gacnik.diplomska.naloga.advice;
 
 import com.gacnik.diplomska.naloga.controller.EmployeeController;
+import com.gacnik.diplomska.naloga.exceptions.DeviceAlreadyAssignedException;
+import com.gacnik.diplomska.naloga.exceptions.DeviceNotFoundException;
 import com.gacnik.diplomska.naloga.exceptions.EmployeeNotCreatedException;
 import com.gacnik.diplomska.naloga.exceptions.EmployeeNotFoundException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
@@ -33,6 +35,17 @@ public class EmployeeAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     String constraintViolationExceptionHandler(ConstraintViolationException ex) { return ex.getMessage();}
 
-
+    @ResponseBody
+    @ExceptionHandler(DeviceAlreadyAssignedException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    String deviceAlreadyAssignedExceptionHandler(DeviceAlreadyAssignedException ex) {
+        return ex.getMessage();
+    }
+    @ResponseBody
+    @ExceptionHandler(DeviceNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    String deviceNotFoundExceptionHandler(DeviceNotFoundException ex) {
+        return ex.getMessage();
+    }
 
 }

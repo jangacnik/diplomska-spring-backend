@@ -2,6 +2,8 @@ package com.gacnik.diplomska.naloga.service;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gacnik.diplomska.naloga.exceptions.DeviceAlreadyAssignedException;
+import com.gacnik.diplomska.naloga.exceptions.DeviceNotFoundException;
 import com.gacnik.diplomska.naloga.exceptions.EmployeeNotCreatedException;
 import com.gacnik.diplomska.naloga.exceptions.EmployeeNotFoundException;
 import com.gacnik.diplomska.naloga.model.Employee;
@@ -14,6 +16,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -73,5 +76,23 @@ public class EmployeeService {
             throw new EmployeeNotFoundException("uuid: "+changes.getUuid());
         }
         return employeeRepository.save(changes);
+    }
+
+    public void addDevice(String uuid, String deviceId) {
+        Employee employee = employeeRepository.findById(uuid).orElseThrow(() -> new EmployeeNotFoundException("uuid: "+uuid));
+        if(!employee.getDeviceId().contains(deviceId)) {
+            employee.getDeviceId().add(deviceId);
+            employeeRepository.save(employee);
+        }
+        throw new DeviceAlreadyAssignedException(deviceId);
+    }
+
+    public void deleteDevice(String uuid, String deviceId) {
+        Employee employee = employeeRepository.findById(uuid).orElseThrow(() -> new EmployeeNotFoundException("uuid: "+uuid));
+        if(employee.getDeviceId().contains(deviceId)) {
+            employee.getDeviceId().add(deviceId);
+            employeeRepository.save(employee);
+        }
+        throw new DeviceNotFoundException(deviceId);
     }
 }
