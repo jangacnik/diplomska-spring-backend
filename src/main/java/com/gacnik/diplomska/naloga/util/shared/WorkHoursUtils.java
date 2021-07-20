@@ -3,7 +3,7 @@ package com.gacnik.diplomska.naloga.util.shared;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gacnik.diplomska.naloga.model.DateDuration;
-import com.gacnik.diplomska.naloga.model.WorkHourType;
+import com.gacnik.diplomska.naloga.model.enums.WorkHourType;
 import com.gacnik.diplomska.naloga.model.WorkHours;
 import lombok.experimental.UtilityClass;
 import lombok.extern.log4j.Log4j2;

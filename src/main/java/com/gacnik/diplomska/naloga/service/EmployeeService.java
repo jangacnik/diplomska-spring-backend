@@ -52,14 +52,14 @@ public class EmployeeService {
     }
 
 
-    public Employee addNewEmployee(Employee employee) {
+    public void addNewEmployee(Employee employee) {
         Set<ConstraintViolation<Employee>> violation = validator.validate(employee);
         if (!violation.isEmpty())
             throw new ConstraintViolationException(violation);
         if (
                 employeeRepository.findFirstEmployeeByEmailOrPhone(employee.getEmail(), employee.getPhone()).isEmpty() && employeeRepository.findEmployeeByDeviceIdContaining(employee.getDeviceId()).isEmpty()) {
             employeeRepository.insert(employee);
-            return employee;
+            return;
         }
         throw new EmployeeNotCreatedException(" employee with E-mail, Phone number or Device ID already exists");
     }

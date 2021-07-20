@@ -1,6 +1,7 @@
 package com.gacnik.diplomska.naloga.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.gacnik.diplomska.naloga.model.enums.WorkHourType;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;

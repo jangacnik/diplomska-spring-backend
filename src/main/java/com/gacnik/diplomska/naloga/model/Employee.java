@@ -1,17 +1,14 @@
 package com.gacnik.diplomska.naloga.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.gacnik.diplomska.naloga.model.enums.Sex;
 import lombok.Data;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.lang.NonNullApi;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -19,8 +16,6 @@ import java.util.List;
 @Log4j2
 @Data
 @Document(collection = "employees")
-@Getter
-@Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
 //@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Employee {

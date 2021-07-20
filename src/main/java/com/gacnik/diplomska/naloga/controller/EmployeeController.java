@@ -51,9 +51,9 @@ public class EmployeeController {
 
     // dodajanje novih delavcev
     @PostMapping(value = "/new",consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<?> addNewEmployee(@RequestBody Employee employee) {
-
-        return new ResponseEntity<Employee>(employeeService.addNewEmployee(employee), HttpStatus.CREATED);
+    public ResponseEntity<Void> addNewEmployee(@RequestBody Employee employee) {
+        employeeService.addNewEmployee(employee);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     // posodabljenje delavcev
@@ -74,15 +74,15 @@ public class EmployeeController {
 
     //dodajanje naprav
     @PostMapping(value = "/add/device/{uuid}")
-    public ResponseEntity<String> addNewDevice(@PathVariable String uuid, @RequestBody String deviceId){
+    public ResponseEntity<Void> addNewDevice(@PathVariable String uuid, @RequestBody String deviceId){
         employeeService.addDevice(uuid, deviceId);
-        return new ResponseEntity<>(null,HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
     //odstranjevanje naprav
     @DeleteMapping(value = "/delete/device/{uuid}")
-    public ResponseEntity<String> deleteDevice(@PathVariable String uuid, @RequestBody String deviceId) {
+    public ResponseEntity<Void> deleteDevice(@PathVariable String uuid, @RequestBody String deviceId) {
         employeeService.deleteDevice(uuid, deviceId);
-        return new ResponseEntity<>(null, HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping(value = "/device/{uuid}")
@@ -97,8 +97,8 @@ public class EmployeeController {
     }
 
     @DeleteMapping(value = "/delete/device/{uuid}")
-    public ResponseEntity<String> deleteAllDevicesOfEmployee(@PathVariable String uuid){
+    public ResponseEntity<Void> deleteAllDevicesOfEmployee(@PathVariable String uuid){
         employeeService.deleteAllDevicesOfEmployee(uuid);
-        return new ResponseEntity<>(null,HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

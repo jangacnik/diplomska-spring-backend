@@ -1,7 +1,7 @@
 package com.gacnik.diplomska.naloga.service;
 
 import com.gacnik.diplomska.naloga.exceptions.EmployeeNotFoundException;
-import com.gacnik.diplomska.naloga.model.WorkHourType;
+import com.gacnik.diplomska.naloga.model.enums.WorkHourType;
 import com.gacnik.diplomska.naloga.model.WorkHours;
 import com.gacnik.diplomska.naloga.model.WorkhourLog;
 import com.gacnik.diplomska.naloga.repo.WorkHoursRepository;
@@ -11,9 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
-import java.sql.Array;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
