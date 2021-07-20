@@ -56,7 +56,6 @@ public class EmployeeController {
         return new ResponseEntity<Employee>(employeeService.addNewEmployee(employee), HttpStatus.CREATED);
     }
 
-
     // posodabljenje delavcev
     @PutMapping(value = "/update", consumes = "application/json")
     public ResponseEntity<Employee> updateEmployeeInfo(@RequestBody Employee changes) {
@@ -84,5 +83,22 @@ public class EmployeeController {
     public ResponseEntity<String> deleteDevice(@PathVariable String uuid, @RequestBody String deviceId) {
         employeeService.deleteDevice(uuid, deviceId);
         return new ResponseEntity<>(null, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/device/{uuid}")
+    public ResponseEntity<List<String>> getAllDevicesOfEmployee(@PathVariable String uuid){
+        return new ResponseEntity<>(employeeService.getAllDevicesByEmployee(uuid),HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/device/id/{deviceId}")
+    public ResponseEntity<Employee> getEmployeeByDeviceId(@PathVariable String deviceId) {
+        return new ResponseEntity<>(employeeService.findEmployeeByDeviceId(deviceId),HttpStatus.OK);
+
+    }
+
+    @DeleteMapping(value = "/delete/device/{uuid}")
+    public ResponseEntity<String> deleteAllDevicesOfEmployee(@PathVariable String uuid){
+        employeeService.deleteAllDevicesOfEmployee(uuid);
+        return new ResponseEntity<>(null,HttpStatus.OK);
     }
 }

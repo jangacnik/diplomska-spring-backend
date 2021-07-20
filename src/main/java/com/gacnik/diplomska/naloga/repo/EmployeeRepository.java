@@ -12,4 +12,5 @@ public interface EmployeeRepository extends MongoRepository<Employee, String> {
     Optional<Employee>findEmployeeByDeviceIdContaining(List<String> ids);
     List<Employee>findEmployeesByNameContaining(String name);
     List<Employee>findEmployeesBySurnameContaining(String surname);
+    Employee findEmployeeByDeviceIdContaining(String id);
 }
