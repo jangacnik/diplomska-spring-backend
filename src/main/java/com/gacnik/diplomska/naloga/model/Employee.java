@@ -1,10 +1,8 @@
 package com.gacnik.diplomska.naloga.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.gacnik.diplomska.naloga.model.enums.Sex;
+import com.gacnik.diplomska.naloga.model.enums.Gender;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -34,17 +32,17 @@ public class Employee {
     @NotNull
     private Address address;
     @NotNull
-    private Sex sex;
+    private Gender gender;
     @Indexed(unique = true)
     private List<String> deviceId;
 
-    public Employee(String name, String surname, String email, String phone, Address address, Sex sex, List<String> deviceId) {
+    public Employee(String name, String surname, String email, String phone, Address address, Gender gender, List<String> deviceId) {
         this.name = name;
         this.surname = surname;
         this.email = email;
         this.phone = phone;
         this.address = address;
-        this.sex = sex;
+        this.gender = gender;
         this.deviceId = deviceId;
     }
 }
