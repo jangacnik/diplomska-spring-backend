@@ -33,7 +33,7 @@ public class Employee {
     private Address address;
     @NotNull
     private Gender gender;
-    @Indexed(unique = true)
+    @Indexed(unique = true, sparse = true)
     private List<String> deviceId;
 
     public Employee(String name, String surname, String email, String phone, Address address, Gender gender, List<String> deviceId) {

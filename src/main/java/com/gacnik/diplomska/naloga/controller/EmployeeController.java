@@ -4,7 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gacnik.diplomska.naloga.model.Employee;
 import com.gacnik.diplomska.naloga.service.EmployeeService;
 import lombok.AllArgsConstructor;
+import lombok.extern.java.Log;
 import lombok.extern.log4j.Log4j2;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,6 +18,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 
 @RestController
 @RequestMapping("api/v1/employees")
@@ -52,6 +55,7 @@ public class EmployeeController {
     // dodajanje novih delavcev
     @PostMapping(value = "/new",consumes = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Void> addNewEmployee(@RequestBody Employee employee) {
+        log.info(employee.toString());
         employeeService.addNewEmployee(employee);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
@@ -96,7 +100,7 @@ public class EmployeeController {
 
     }
 
-    @DeleteMapping(value = "/delete/device/{uuid}")
+    @DeleteMapping(value = "/delete/devices/{uuid}")
     public ResponseEntity<Void> deleteAllDevicesOfEmployee(@PathVariable String uuid){
         employeeService.deleteAllDevicesOfEmployee(uuid);
         return new ResponseEntity<>(HttpStatus.OK);

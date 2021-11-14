@@ -57,7 +57,7 @@ public class EmployeeService {
         if (!violation.isEmpty())
             throw new ConstraintViolationException(violation);
         if (
-                employeeRepository.findFirstEmployeeByEmailOrPhone(employee.getEmail(), employee.getPhone()).isEmpty() && employeeRepository.findEmployeeByDeviceIdContaining(employee.getDeviceId()).isEmpty()) {
+                employeeRepository.findFirstEmployeeByEmailOrPhone(employee.getEmail(), employee.getPhone()).isEmpty() && (employee.getDeviceId() == null || employeeRepository.findEmployeeByDeviceIdContaining(employee.getDeviceId()).isEmpty())) {
             employeeRepository.insert(employee);
             return;
         }
