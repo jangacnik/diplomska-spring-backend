@@ -10,6 +10,8 @@ import com.gacnik.diplomska.naloga.model.Employee;
 import com.gacnik.diplomska.naloga.repo.EmployeeRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.validation.ConstraintViolation;
@@ -27,6 +29,8 @@ public class EmployeeService {
 
     private final EmployeeRepository employeeRepository;
     private final Validator validator;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public List<Employee> getAllEmployees() {
         return employeeRepository.findAll();
@@ -51,6 +55,13 @@ public class EmployeeService {
         return employeeRepository.findEmployeesBySurnameContaining("surname: " + surname);
     }
 
+    public Employee getEmployeeByEmail(String email) {
+        if (employeeRepository.findEmployeeByEmail(email) != null) {
+            return employeeRepository.findEmployeeByEmail(email);
+        }
+        throw new EmployeeNotFoundException("e-mail: " + email);
+    }
+
 
     public void addNewEmployee(Employee employee) {
         Set<ConstraintViolation<Employee>> violation = validator.validate(employee);
@@ -58,6 +69,11 @@ public class EmployeeService {
             throw new ConstraintViolationException(violation);
         if (
                 employeeRepository.findFirstEmployeeByEmailOrPhone(employee.getEmail(), employee.getPhone()).isEmpty() && (employee.getDeviceId() == null || employeeRepository.findEmployeeByDeviceIdContaining(employee.getDeviceId()).isEmpty())) {
+            if (employee.getPassword() == null) {
+                employee.setPassword(passwordEncoder.encode(employee.getName() + employee.getSurname()));
+            } else {
+                employee.setPassword(passwordEncoder.encode(employee.getPassword()));
+            }
             employeeRepository.insert(employee);
             return;
         }
@@ -108,7 +124,7 @@ public class EmployeeService {
         employeeRepository.save(employee);
     }
 
-    public Employee findEmployeeByDeviceId(String deviceID){
+    public Employee findEmployeeByDeviceId(String deviceID) {
         return employeeRepository.findEmployeeByDeviceIdContaining(deviceID);
     }
 }

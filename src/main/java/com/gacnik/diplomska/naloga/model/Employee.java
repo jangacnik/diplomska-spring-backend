@@ -2,6 +2,7 @@ package com.gacnik.diplomska.naloga.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.gacnik.diplomska.naloga.model.enums.Gender;
+import com.gacnik.diplomska.naloga.model.enums.Roles;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.annotation.Id;
@@ -9,6 +10,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 
 @Log4j2
@@ -34,9 +36,12 @@ public class Employee {
     @NotNull
     private Gender gender;
     @Indexed(unique = true, sparse = true)
-    private List<String> deviceId;
+    private ArrayList<String> deviceId;
 
-    public Employee(String name, String surname, String email, String phone, Address address, Gender gender, List<String> deviceId) {
+    private ArrayList<Roles> roles;
+    private String password;
+
+    public Employee(String name, String surname, String email, String phone, Address address, Gender gender, ArrayList<String> deviceId, String password) {
         this.name = name;
         this.surname = surname;
         this.email = email;
@@ -44,5 +49,6 @@ public class Employee {
         this.address = address;
         this.gender = gender;
         this.deviceId = deviceId;
+        this.password = password;
     }
 }

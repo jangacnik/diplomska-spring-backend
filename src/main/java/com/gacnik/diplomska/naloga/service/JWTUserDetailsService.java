@@ -1,0 +1,30 @@
+package com.gacnik.diplomska.naloga.service;
+
+import com.gacnik.diplomska.naloga.model.Employee;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+
+@Service
+public class JWTUserDetailsService implements UserDetailsService {
+    @Autowired
+    private EmployeeService employeeService;
+
+    @Override
+    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
+        if (employeeService.getEmployeeByEmail(s) != null) {
+            final Employee employee = employeeService.getEmployeeByEmail(s);
+            return new User(employee.getEmail(), employee.getPassword(),
+                    new ArrayList<>());
+
+        } else {
+            throw new UsernameNotFoundException("User not found with username: " + s);
+        }
+    }
+}
