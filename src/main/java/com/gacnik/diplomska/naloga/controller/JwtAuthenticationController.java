@@ -49,7 +49,6 @@ public class JwtAuthenticationController {
     @RequestMapping(value = "/refresh", method = RequestMethod.GET)
     public ResponseEntity<?> refreshToken(@RequestHeader String token) {
         String username = jwtTokenUtil.getUsernameFromToken(token);
-        System.out.println(token);
         UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
         if (jwtTokenUtil.validateToken(token, userDetails)) {
             final String newToken = jwtTokenUtil.generateToken(userDetails);

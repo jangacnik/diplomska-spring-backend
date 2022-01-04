@@ -6,7 +6,6 @@ import com.gacnik.diplomska.naloga.model.DateDuration;
 import com.gacnik.diplomska.naloga.model.enums.WorkHourType;
 import com.gacnik.diplomska.naloga.model.WorkHours;
 import lombok.experimental.UtilityClass;
-import lombok.extern.log4j.Log4j2;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import java.time.LocalDateTime;
@@ -15,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @UtilityClass
-@Log4j2
 public class WorkHoursUtils {
 
     private ObjectMapper mapper = new ObjectMapper();

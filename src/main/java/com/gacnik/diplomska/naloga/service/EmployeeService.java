@@ -1,7 +1,5 @@
 package com.gacnik.diplomska.naloga.service;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gacnik.diplomska.naloga.exceptions.DeviceAlreadyAssignedException;
 import com.gacnik.diplomska.naloga.exceptions.DeviceNotFoundException;
 import com.gacnik.diplomska.naloga.exceptions.EmployeeNotCreatedException;
@@ -9,7 +7,6 @@ import com.gacnik.diplomska.naloga.exceptions.EmployeeNotFoundException;
 import com.gacnik.diplomska.naloga.model.Employee;
 import com.gacnik.diplomska.naloga.repo.EmployeeRepository;
 import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,12 +16,10 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 @Service
 @AllArgsConstructor
-@Log4j2
 public class EmployeeService {
 
     private final EmployeeRepository employeeRepository;

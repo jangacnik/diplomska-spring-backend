@@ -1,29 +1,18 @@
 package com.gacnik.diplomska.naloga.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gacnik.diplomska.naloga.model.Employee;
 import com.gacnik.diplomska.naloga.service.EmployeeService;
 import lombok.AllArgsConstructor;
-import lombok.extern.java.Log;
-import lombok.extern.log4j.Log4j2;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
 import java.util.List;
-import java.util.Set;
-import java.util.logging.Logger;
 
 @RestController
 @RequestMapping("api/v1/employees")
 @AllArgsConstructor
-@Log4j2
 public class EmployeeController {
 
     private final EmployeeService employeeService;
@@ -55,7 +44,6 @@ public class EmployeeController {
     // dodajanje novih delavcev
     @PostMapping(value = "/new",consumes = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Void> addNewEmployee(@RequestBody Employee employee) {
-        log.info(employee.toString());
         employeeService.addNewEmployee(employee);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

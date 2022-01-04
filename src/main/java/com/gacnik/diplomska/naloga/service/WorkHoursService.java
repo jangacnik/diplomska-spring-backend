@@ -8,7 +8,6 @@ import com.gacnik.diplomska.naloga.repo.WorkHoursRepository;
 import com.gacnik.diplomska.naloga.util.shared.Constants;
 import com.gacnik.diplomska.naloga.util.shared.WorkHoursUtils;
 import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -17,7 +16,6 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
-@Log4j2
 public class WorkHoursService {
 
     private final WorkHoursRepository workHoursRepository;

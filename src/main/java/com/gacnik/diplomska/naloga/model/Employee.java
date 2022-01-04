@@ -4,16 +4,13 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.gacnik.diplomska.naloga.model.enums.Gender;
 import com.gacnik.diplomska.naloga.model.enums.Roles;
 import lombok.Data;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
-import java.util.List;
 
-@Log4j2
 @Data
 @Document(collection = "employees")
 @JsonIgnoreProperties(ignoreUnknown = true)

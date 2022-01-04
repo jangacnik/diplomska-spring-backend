@@ -8,7 +8,6 @@ import com.gacnik.diplomska.naloga.model.WorkhourLog;
 import com.gacnik.diplomska.naloga.service.WorkHoursService;
 import com.gacnik.diplomska.naloga.util.shared.WorkHoursUtils;
 import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +18,6 @@ import java.util.List;
 @RestController
 @RequestMapping("api/v1/hours")
 @AllArgsConstructor
-@Log4j2
 public class WorkHoursController {
 
     private final WorkHoursService workHoursService;
@@ -36,14 +34,12 @@ public class WorkHoursController {
 
     @PostMapping(value = "/sick/duration/{uuid}")
     public ResponseEntity<Void> addSickLeave(@RequestBody String dateDuration, @PathVariable String uuid) throws JsonProcessingException {
-        log.warn(dateDuration);
         List<WorkHours> listOfWorkHours = WorkHoursUtils.getDatesFromDuration(dateDuration, uuid, WorkHourType.SICK_LEAVE);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping(value = "/vacation/duration/{uuid}")
     public ResponseEntity<Void> addLeave(@RequestBody String dateDuration, @PathVariable String uuid) throws JsonProcessingException {
-        log.warn(dateDuration);
         List<WorkHours> listOfWorkHours = WorkHoursUtils.getDatesFromDuration(dateDuration, uuid, WorkHourType.LEAVE);
         workHoursService.addLeaveAsDuration(listOfWorkHours);
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
