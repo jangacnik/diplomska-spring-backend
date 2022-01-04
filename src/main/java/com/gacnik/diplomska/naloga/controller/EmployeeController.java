@@ -2,7 +2,11 @@ package com.gacnik.diplomska.naloga.controller;
 
 import com.gacnik.diplomska.naloga.model.Employee;
 import com.gacnik.diplomska.naloga.service.EmployeeService;
+import com.gacnik.diplomska.naloga.util.security.JwtTokenUtil;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,10 +21,22 @@ public class EmployeeController {
 
     private final EmployeeService employeeService;
 
+
+    private final Logger log = LoggerFactory.getLogger(EmployeeController.class);
+
+    @Autowired
+    private final JwtTokenUtil jwtTokenUtil;
+
+
     //pridobi vse delavce
     @GetMapping("/all")
     public ResponseEntity<List<Employee>> fetchAllEmployees() {
         return new ResponseEntity<>(employeeService.getAllEmployees(), HttpStatus.OK);
+    }
+
+    @GetMapping("/user")
+    public ResponseEntity<Employee> fetchUserData(@RequestHeader (name="Authorization") String token) {
+        return new ResponseEntity<>(employeeService.getEmployeeByEmail(jwtTokenUtil.getUsernameFromToken(token.substring(7))), HttpStatus.OK);
     }
 
     // najdi se delavce z imenom
