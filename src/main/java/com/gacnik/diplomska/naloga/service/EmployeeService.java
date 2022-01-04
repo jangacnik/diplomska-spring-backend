@@ -5,9 +5,11 @@ import com.gacnik.diplomska.naloga.exceptions.DeviceNotFoundException;
 import com.gacnik.diplomska.naloga.exceptions.EmployeeNotCreatedException;
 import com.gacnik.diplomska.naloga.exceptions.EmployeeNotFoundException;
 import com.gacnik.diplomska.naloga.model.Employee;
+import com.gacnik.diplomska.naloga.util.shared.Roles;
 import com.gacnik.diplomska.naloga.repo.EmployeeRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -68,6 +70,11 @@ public class EmployeeService {
                 employee.setPassword(passwordEncoder.encode(employee.getName() + employee.getSurname()));
             } else {
                 employee.setPassword(passwordEncoder.encode(employee.getPassword()));
+            }
+            if (employee.getRoles().isEmpty()) {
+                ArrayList<SimpleGrantedAuthority> roles = new ArrayList<>();
+                roles.add(new SimpleGrantedAuthority(Roles.USER));
+                employee.setRoles(roles);
             }
             employeeRepository.insert(employee);
             return;

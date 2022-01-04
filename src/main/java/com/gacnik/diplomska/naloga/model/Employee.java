@@ -2,11 +2,11 @@ package com.gacnik.diplomska.naloga.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.gacnik.diplomska.naloga.model.enums.Gender;
-import com.gacnik.diplomska.naloga.model.enums.Roles;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -35,7 +35,7 @@ public class Employee {
     @Indexed(unique = true, sparse = true)
     private ArrayList<String> deviceId;
 
-    private ArrayList<Roles> roles;
+    private ArrayList<SimpleGrantedAuthority> roles;
     private String password;
 
     public Employee(String name, String surname, String email, String phone, Address address, Gender gender, ArrayList<String> deviceId, String password) {
