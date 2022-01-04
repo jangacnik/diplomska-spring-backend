@@ -26,7 +26,7 @@ public class CustomAuthenticationManager  implements AuthenticationManager {
         final String password = authentication.getCredentials().toString();
         final Employee employee = employeeService.getEmployeeByEmail(username);
         if(passwordEncoder.matches(password, employee.getPassword())) {
-            return new UsernamePasswordAuthenticationToken(username, password, new ArrayList<>());
+            return new UsernamePasswordAuthenticationToken(username, password, employee.getRoles());
         } else {
             throw new BadCredentialsException("1000");
         }

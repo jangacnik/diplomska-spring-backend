@@ -1,5 +1,6 @@
 package com.gacnik.diplomska.naloga.config;
 
+import com.gacnik.diplomska.naloga.model.enums.Roles;
 import com.gacnik.diplomska.naloga.util.security.JwtAuthenticationEntryPoint;
 import com.gacnik.diplomska.naloga.util.security.JwtRequestFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,9 +56,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         // We don't need CSRF for this example
         httpSecurity.csrf().disable()
                 // dont authenticate this particular request
-                .authorizeRequests().antMatchers("/authenticate", "/refresh/**", "/api/v1/employees/new/").permitAll().
+                .authorizeRequests().antMatchers("/authenticate", "/refresh/**")
+                .permitAll()
+                .antMatchers("/api/v1/admin/**").hasAuthority(Roles.ADMIN.toString()).
                 // all other requests need to be authenticated
-                        anyRequest().authenticated().and().
+                        anyRequest().hasAnyAuthority(Roles.USER.toString(),Roles.ADMIN.toString())
+//                .hasAnyAuthority("admin", "user")
+                .and().
                 // make sure we use stateless session; session won't be used to
                 // store user's state.
                         exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement()
