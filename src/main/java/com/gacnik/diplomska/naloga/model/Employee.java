@@ -2,7 +2,6 @@ package com.gacnik.diplomska.naloga.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.gacnik.diplomska.naloga.model.enums.Gender;
-import com.gacnik.diplomska.naloga.model.enums.Roles;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;

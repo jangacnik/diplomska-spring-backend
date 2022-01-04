@@ -74,7 +74,6 @@ public class EmployeeService {
             if(employee.getRoles() == null) {
                 ArrayList<SimpleGrantedAuthority> roles = new ArrayList<>();
                 roles.add(new SimpleGrantedAuthority(Roles.USER.toString()));
-                roles.add(new SimpleGrantedAuthority(Roles.ADMIN.toString()));
                 employee.setRoles(roles);
             }
             employeeRepository.insert(employee);
