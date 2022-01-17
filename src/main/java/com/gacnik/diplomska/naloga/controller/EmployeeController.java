@@ -37,7 +37,7 @@ public class EmployeeController {
     // vrni podatke o trenutnem uporabniku preko JWT zetona
     @GetMapping("/user")
     public ResponseEntity<Employee> fetchUserData(@RequestHeader (name="Authorization") String token) {
-        log.warn(token);
+//        log.warn(token);
         return new ResponseEntity<>(employeeService.getEmployeeByEmail(jwtTokenUtil.getUsernameFromToken(token.substring(7))), HttpStatus.OK);
     }
 

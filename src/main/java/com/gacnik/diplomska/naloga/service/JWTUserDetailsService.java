@@ -18,8 +18,8 @@ public class JWTUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        if (employeeService.getEmployeeByEmail(s) != null) {
-            final Employee employee = employeeService.getEmployeeByEmail(s);
+        if (employeeService.getEmployeeByEmailAuth(s) != null) {
+            final Employee employee = employeeService.getEmployeeByEmailAuth(s);
             return new User(employee.getEmail(), employee.getPassword(),
                     employee.getRoles());
 

@@ -5,8 +5,8 @@ import com.gacnik.diplomska.naloga.exceptions.DeviceNotFoundException;
 import com.gacnik.diplomska.naloga.exceptions.EmployeeNotCreatedException;
 import com.gacnik.diplomska.naloga.exceptions.EmployeeNotFoundException;
 import com.gacnik.diplomska.naloga.model.Employee;
-import com.gacnik.diplomska.naloga.model.enums.Roles;
 import com.gacnik.diplomska.naloga.repo.EmployeeRepository;
+import com.gacnik.diplomska.naloga.util.shared.Roles;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -52,9 +52,19 @@ public class EmployeeService {
         return employeeRepository.findEmployeesBySurnameContaining("surname: " + surname);
     }
 
-    public Employee getEmployeeByEmail(String email) {
+    public Employee getEmployeeByEmailAuth(String email) {
         if (employeeRepository.findEmployeeByEmail(email) != null) {
             return employeeRepository.findEmployeeByEmail(email);
+        }
+        throw new EmployeeNotFoundException("e-mail: " + email);
+    }
+
+    public Employee getEmployeeByEmail(String email) {
+        if (employeeRepository.findEmployeeByEmail(email) != null) {
+            Employee returnEmployee = employeeRepository.findEmployeeByEmail(email);
+            returnEmployee.setPassword(null);
+            returnEmployee.setRoles(null);
+            return returnEmployee;
         }
         throw new EmployeeNotFoundException("e-mail: " + email);
     }

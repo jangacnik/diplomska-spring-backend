@@ -1,8 +1,8 @@
 package com.gacnik.diplomska.naloga.config;
 
-import com.gacnik.diplomska.naloga.model.enums.Roles;
 import com.gacnik.diplomska.naloga.util.security.JwtAuthenticationEntryPoint;
 import com.gacnik.diplomska.naloga.util.security.JwtRequestFilter;
+import com.gacnik.diplomska.naloga.util.shared.Roles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +17,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRepository;
 
 @Configuration
 @EnableWebSecurity
@@ -56,12 +58,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         // We don't need CSRF for this example
         httpSecurity.csrf().disable()
                 // dont authenticate this particular request
-                .authorizeRequests().antMatchers("/authenticate", "/refresh/**")
+                .authorizeRequests().antMatchers("/authenticate*", "/refresh/**")
                 .permitAll()
+                // only access for admins
                 .antMatchers("/api/v1/admin/**").hasAuthority(Roles.ADMIN.toString()).
-                // all other requests need to be authenticated
-                        anyRequest().hasAnyAuthority(Roles.USER.toString(),Roles.ADMIN.toString())
-//                .hasAnyAuthority("admin", "user")
+                // accessible to all logged in users
+                        antMatchers("/api/v1/employees/**").hasAnyAuthority(Roles.USER.toString(),Roles.ADMIN.toString())
                 .and().
                 // make sure we use stateless session; session won't be used to
                 // store user's state.
