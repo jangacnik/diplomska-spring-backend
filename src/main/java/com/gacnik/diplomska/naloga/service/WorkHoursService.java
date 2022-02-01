@@ -16,8 +16,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.TemporalAdjuster;
+import java.time.temporal.TemporalAdjusters;
+import java.time.temporal.WeekFields;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -65,6 +71,38 @@ public class WorkHoursService {
         workHours.put(Calendar.DATE,today);
         monthlyWorkHours.setWorkHours(workHours);
         return workHoursRepository.save(monthlyWorkHours);
+    }
+    // returns map of hours in long for the current week
+    public Map<Integer, Long> getWorkhoursOfCurrentWeek(String employeeUuid) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        int day = 1;
+        Map<Integer, Long> hours = new HashMap<>();
+        LocalDate monday = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+        LocalDate sunday = LocalDate.now().with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
+        log.warn(monday + "/"+sunday);
+        if(monday.getMonth() != sunday.getMonth()) {
+           MonthlyWorkHours monthlyWorkHoursPrev = workHoursRepository.findById(employeeUuid+"_"+ monday.getMonth() +"_"+ monday.getYear()).get();
+           Optional<MonthlyWorkHours> monthlyWorkHoursNextOpt = workHoursRepository.findById(employeeUuid+"_"+ sunday.getMonth() +"_"+ sunday.getYear());
+            for(int i = monday.getDayOfMonth();monthlyWorkHoursPrev.getWorkHours().get(i) != null; i++) {
+                hours.put(day, monthlyWorkHoursPrev.getWorkHours().get(i).getTotalTime());
+                day++;
+            }
+            if(monthlyWorkHoursNextOpt.isPresent()){
+                MonthlyWorkHours monthlyWorkHours = monthlyWorkHoursNextOpt.get();
+                for(int i = 1; i <= sunday.getDayOfMonth(); i++) {
+                    hours.put(day, monthlyWorkHours.getWorkHours().get(i).getTotalTime());
+                    day++;
+                }
+            }
+            return hours;
+        }
+        MonthlyWorkHours monthlyWorkHours = workHoursRepository.findById(employeeUuid+"_"+ calendar.get(Calendar.MONTH) +"_"+ calendar.get(Calendar.YEAR)).get();
+        for(int i = monday.getDayOfMonth();monthlyWorkHours.getWorkHours().get(i) != null; i++) {
+            hours.put(day, monthlyWorkHours.getWorkHours().get(i).getTotalTime());
+            day++;
+        }
+        return hours;
     }
 //
 //    // can be used for sick leave and vacation
