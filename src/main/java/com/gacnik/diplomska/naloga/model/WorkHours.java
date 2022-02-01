@@ -16,8 +16,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class WorkHours {
     @Id
-    private String uuid;
-    private String employeeUuid;
+    private String uuid; // id is day of the month
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime startTime;
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
@@ -25,28 +24,24 @@ public class WorkHours {
     private WorkHourType workHourType;
     private long totalTime; // in minutes for ease of calculations
 
-    public WorkHours(String employeeUuid, LocalDateTime startTime, WorkHourType workHourType) {
-        this.employeeUuid = employeeUuid;
+    public WorkHours( LocalDateTime startTime, WorkHourType workHourType) {
         this.startTime = startTime;
         this.workHourType = workHourType;
     }
     // for sick leave and holiday leave
-    public WorkHours(String employeeUuid, WorkHourType workHourType, long totalTime) {
-        this.employeeUuid = employeeUuid;
+    public WorkHours( WorkHourType workHourType, long totalTime) {
         this.workHourType = workHourType;
         this.totalTime = totalTime;
     }
 
-    public WorkHours(String uuid, String employeeUuid, LocalDateTime startTime, WorkHourType workHourType, long totalTime) {
+    public WorkHours(String uuid, LocalDateTime startTime, WorkHourType workHourType, long totalTime) {
         this.uuid = uuid;
-        this.employeeUuid = employeeUuid;
         this.startTime = startTime;
         this.workHourType = workHourType;
         this.totalTime = totalTime;
     }
 
-    public WorkHours(String employeeUuid, LocalDateTime startTime, LocalDateTime endTime, WorkHourType workHourType, long totalTime) {
-        this.employeeUuid = employeeUuid;
+    public WorkHours( LocalDateTime startTime, LocalDateTime endTime, WorkHourType workHourType, long totalTime) {
         this.startTime = startTime;
         this.endTime = endTime;
         this.workHourType = workHourType;

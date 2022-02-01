@@ -1,31 +1,20 @@
 package com.gacnik.diplomska.naloga.model;
 
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
-@Document(collection = "monthlyHours")
-@Getter
-@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class MonthlyHours {
     @Id
-    private String uuid;
-    private String employeeUuid;
+    private String uuid; // employee uuid
     // all in minutes
-    private int totalWorkTime;
-    private int totalSickLeaveTime;
-    private int totalLeaveTime;
-    private int totalTime;
-
-
-    public MonthlyHours(String employeeUuid, int totalWorkTime, int totalSickLeaveTime, int totalLeaveTime, int totalTime) {
-        this.employeeUuid = employeeUuid;
-        this.totalWorkTime = totalWorkTime;
-        this.totalSickLeaveTime = totalSickLeaveTime;
-        this.totalLeaveTime = totalLeaveTime;
-        this.totalTime = totalTime;
-    }
+    private long totalWorkTime;
+    private long totalSickLeaveTime;
+    private long totalLeaveTime;
+    private long totalTime;
 }
+
+
