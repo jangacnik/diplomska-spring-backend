@@ -74,13 +74,13 @@ public class WorkHoursService {
         return workHoursRepository.save(monthlyWorkHours);
     }
     // returns map of hours in long for the current week
-    public Map<Integer, Long> getWorkhoursOfCurrentWeek(String employeeUuid) {
+    public Map<DayOfWeek, Long> getWorkhoursOfCurrentWeek(String employeeUuid) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
         MonthlyWorkHours monthlyWorkHoursPrev = null;
         MonthlyWorkHours monthlyWorkHours = null;
         int day = 1;
-        Map<Integer, Long> hours = new HashMap<>();
+        Map<DayOfWeek, Long> hours = new HashMap<>();
         LocalDate monday = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
         LocalDate sunday = LocalDate.now().with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
         log.warn(monday + "/"+sunday);
@@ -91,20 +91,20 @@ public class WorkHoursService {
                monthlyWorkHoursPrev= monthlyWorkHoursPrevOpt.get();
                 Map<Integer, WorkHours> mapPrev = monthlyWorkHoursPrev.getWorkHours().entrySet().stream().filter(x -> x.getKey() >= monday.getDayOfMonth())
                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-                mapPrev.forEach((k,v) -> hours.put(k, v.getTotalTime()));
+                mapPrev.forEach((k,v) -> hours.put(LocalDate.of(monday.getYear(), monday.getMonth(),k).getDayOfWeek(), v.getTotalTime()));
            }
            Optional<MonthlyWorkHours> monthlyWorkHoursNextOpt = workHoursRepository.findById(employeeUuid+"_"+ sunday.getMonth().getValue() +"_"+ sunday.getYear());
            if(monthlyWorkHoursNextOpt.isPresent()) {
                monthlyWorkHours = monthlyWorkHoursNextOpt.get();
                Map<Integer, WorkHours> mapNext = monthlyWorkHours.getWorkHours().entrySet().stream().filter(x -> x.getKey() <= sunday.getDayOfMonth())
                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-               mapNext.forEach((k,v) -> hours.put(k, v.getTotalTime()));
+               mapNext.forEach((k,v) -> hours.put(LocalDate.of(sunday.getYear(), sunday.getMonth(),k).getDayOfWeek(), v.getTotalTime()));
            }
 
             return hours;
         }
         Optional<MonthlyWorkHours> monthlyWorkHoursOptional = workHoursRepository.findById(employeeUuid+"_"+ calendar.get(Calendar.MONTH) +"_"+ calendar.get(Calendar.YEAR));
-        monthlyWorkHoursOptional.ifPresent(workHours -> workHours.getWorkHours().forEach((k, v) -> hours.put(k, v.getTotalTime())));
+        monthlyWorkHoursOptional.ifPresent(workHours -> workHours.getWorkHours().forEach((k, v) -> hours.put(LocalDate.of(calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),k).getDayOfWeek(), v.getTotalTime())));
         return hours;
     }
 

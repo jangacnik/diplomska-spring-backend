@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -43,7 +44,7 @@ public class WorkHoursController {
     }
 
     @GetMapping("/week/current")
-    public ResponseEntity<Map<Integer, Long>> getCurrentWeekWorkHours(@RequestHeader (name="Authorization") String token) {
+    public ResponseEntity<Map<DayOfWeek, Long>> getCurrentWeekWorkHours(@RequestHeader (name="Authorization") String token) {
         Employee employee = employeeService.getEmployeeByEmail(jwtTokenUtil.getUsernameFromToken(token.substring(7)));
         return new ResponseEntity<>(workHoursService.getWorkhoursOfCurrentWeek(employee.getUuid()), HttpStatus.OK);
     }
