@@ -4,6 +4,7 @@ import com.gacnik.diplomska.naloga.exceptions.DeviceAlreadyAssignedException;
 import com.gacnik.diplomska.naloga.exceptions.DeviceNotFoundException;
 import com.gacnik.diplomska.naloga.exceptions.EmployeeNotCreatedException;
 import com.gacnik.diplomska.naloga.exceptions.EmployeeNotFoundException;
+import com.gacnik.diplomska.naloga.model.Device;
 import com.gacnik.diplomska.naloga.model.Employee;
 import com.gacnik.diplomska.naloga.repo.EmployeeRepository;
 import com.gacnik.diplomska.naloga.util.shared.Roles;
@@ -19,6 +20,7 @@ import javax.validation.Validator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -63,7 +65,7 @@ public class EmployeeService {
         if (employeeRepository.findEmployeeByEmail(email) != null) {
             Employee returnEmployee = employeeRepository.findEmployeeByEmail(email);
             returnEmployee.setPassword(null);
-            returnEmployee.setRoles(null);
+//            returnEmployee.setRoles(null);
             return returnEmployee;
         }
         throw new EmployeeNotFoundException("e-mail: " + email);
@@ -75,7 +77,8 @@ public class EmployeeService {
         if (!violation.isEmpty())
             throw new ConstraintViolationException(violation);
         if (
-                employeeRepository.findFirstEmployeeByEmailOrPhone(employee.getEmail(), employee.getPhone()).isEmpty() && (employee.getDeviceId() == null || employeeRepository.findEmployeeByDeviceIdContaining(employee.getDeviceId()).isEmpty())) {
+                employeeRepository.findFirstEmployeeByEmailOrPhone(employee.getEmail(), employee.getPhone()).isEmpty() && (employee.getDeviceId() == null ||
+                        employeeRepository.findEmployeeByDeviceIdMac(employee.getDeviceId().get(0).getMac()).isEmpty())) {
             if (employee.getPassword() == null) {
                 employee.setPassword(passwordEncoder.encode(employee.getName() + employee.getSurname()));
             } else {
@@ -107,32 +110,32 @@ public class EmployeeService {
         return employeeRepository.save(changes);
     }
 
-    public void addDevice(String uuid, String deviceId) {
+    public void addDevice(String uuid, Device deviceId) {
         Employee employee = employeeRepository.findById(uuid).orElseThrow(() -> new EmployeeNotFoundException("uuid: " + uuid));
         if (!employee.getDeviceId().contains(deviceId)) {
             employee.getDeviceId().add(deviceId);
             employeeRepository.save(employee);
         }
-        throw new DeviceAlreadyAssignedException(deviceId);
+        throw new DeviceAlreadyAssignedException(deviceId.getMac());
     }
 
-    public void deleteDevice(String uuid, String deviceId) {
+    public void deleteDevice(String uuid, Device deviceId) {
         Employee employee = employeeRepository.findById(uuid).orElseThrow(() -> new EmployeeNotFoundException("uuid: " + uuid));
         if (employee.getDeviceId().contains(deviceId)) {
             employee.getDeviceId().add(deviceId);
             employeeRepository.save(employee);
         }
-        throw new DeviceNotFoundException(deviceId);
+        throw new DeviceNotFoundException(deviceId.getMac());
     }
 
-    public List<String> getAllDevicesByEmployee(String uuid) {
+    public List<Device> getAllDevicesByEmployee(String uuid) {
         Employee employee = employeeRepository.findById(uuid).orElseThrow(() -> new EmployeeNotFoundException("uuid: " + uuid));
         return employee.getDeviceId();
     }
 
     public void deleteAllDevicesOfEmployee(String uuid) {
         Employee employee = employeeRepository.findById(uuid).orElseThrow(() -> new EmployeeNotFoundException("uuid: " + uuid));
-        employee.setDeviceId(new ArrayList<String>());
+        employee.setDeviceId(new ArrayList<Device>());
         employeeRepository.save(employee);
     }
 

@@ -33,12 +33,12 @@ public class Employee {
     @NotNull
     private Gender gender;
     @Indexed(unique = true, sparse = true)
-    private ArrayList<String> deviceId;
+    private ArrayList<Device> deviceId;
 
     private ArrayList<SimpleGrantedAuthority> roles;
     private String password;
 
-    public Employee(String name, String surname, String email, String phone, Address address, Gender gender, ArrayList<String> deviceId, String password) {
+    public Employee(String name, String surname, String email, String phone, Address address, Gender gender, ArrayList<Device> deviceId, String password) {
         this.name = name;
         this.surname = surname;
         this.email = email;

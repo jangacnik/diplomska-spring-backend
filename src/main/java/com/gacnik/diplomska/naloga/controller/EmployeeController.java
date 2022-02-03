@@ -1,5 +1,6 @@
 package com.gacnik.diplomska.naloga.controller;
 
+import com.gacnik.diplomska.naloga.model.Device;
 import com.gacnik.diplomska.naloga.model.Employee;
 import com.gacnik.diplomska.naloga.service.EmployeeService;
 import com.gacnik.diplomska.naloga.util.security.JwtTokenUtil;
@@ -84,19 +85,19 @@ public class EmployeeController {
 
     //dodajanje naprav
     @PostMapping(value = "/add/device/{uuid}")
-    public ResponseEntity<Void> addNewDevice(@PathVariable String uuid, @RequestBody String deviceId){
+    public ResponseEntity<Void> addNewDevice(@PathVariable String uuid, @RequestBody Device deviceId){
         employeeService.addDevice(uuid, deviceId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
     //odstranjevanje naprav
     @DeleteMapping(value = "/delete/device/{uuid}")
-    public ResponseEntity<Void> deleteDevice(@PathVariable String uuid, @RequestBody String deviceId) {
+    public ResponseEntity<Void> deleteDevice(@PathVariable String uuid, @RequestBody Device deviceId) {
         employeeService.deleteDevice(uuid, deviceId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping(value = "/device/{uuid}")
-    public ResponseEntity<List<String>> getAllDevicesOfEmployee(@PathVariable String uuid){
+    public ResponseEntity<List<Device>> getAllDevicesOfEmployee(@PathVariable String uuid){
         return new ResponseEntity<>(employeeService.getAllDevicesByEmployee(uuid),HttpStatus.OK);
     }
 
