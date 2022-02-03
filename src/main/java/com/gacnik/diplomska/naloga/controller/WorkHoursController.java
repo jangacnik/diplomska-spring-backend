@@ -1,20 +1,21 @@
 package com.gacnik.diplomska.naloga.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.gacnik.diplomska.naloga.model.DateDuration;
-import com.gacnik.diplomska.naloga.model.MonthlyWorkHours;
+import com.gacnik.diplomska.naloga.model.*;
 import com.gacnik.diplomska.naloga.model.enums.WorkHourType;
-import com.gacnik.diplomska.naloga.model.WorkHours;
-import com.gacnik.diplomska.naloga.model.WorkhourLog;
+import com.gacnik.diplomska.naloga.service.EmployeeService;
 import com.gacnik.diplomska.naloga.service.WorkHoursService;
+import com.gacnik.diplomska.naloga.util.security.JwtTokenUtil;
 import com.gacnik.diplomska.naloga.util.shared.WorkHoursUtils;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("api/v1/hours")
@@ -22,6 +23,9 @@ import java.util.List;
 public class WorkHoursController {
 
     private final WorkHoursService workHoursService;
+    @Autowired
+    private final JwtTokenUtil jwtTokenUtil;
+    private final EmployeeService employeeService;
 
     @PostMapping(value = "/new/{uuid}/{type}")
     public ResponseEntity<String> addNewEntry(@PathVariable String uuid, @PathVariable WorkHourType type) {
@@ -36,6 +40,12 @@ public class WorkHoursController {
     public ResponseEntity<Boolean> createTestData(@PathVariable String employeeId, @PathVariable int month, @PathVariable int year) {
         workHoursService.createTestData(employeeId,month,year);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/week/current")
+    public ResponseEntity<Map<Integer, Long>> getCurrentWeekWorkHours(@RequestHeader (name="Authorization") String token) {
+        Employee employee = employeeService.getEmployeeByEmail(jwtTokenUtil.getUsernameFromToken(token.substring(7)));
+        return new ResponseEntity<>(workHoursService.getWorkhoursOfCurrentWeek(employee.getUuid()), HttpStatus.OK);
     }
 //
 //    @PostMapping(value = "/sick/duration/{uuid}")
