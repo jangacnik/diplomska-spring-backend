@@ -32,6 +32,11 @@ public class WorkHoursController {
     public ResponseEntity<MonthlyWorkHours> endEntry(@PathVariable String uuid) throws Exception {
         return new ResponseEntity<>(workHoursService.endEntry(uuid), HttpStatus.OK);
     }
+    @PostMapping("/test/{employeeId}/{month}/{year}")
+    public ResponseEntity<Boolean> createTestData(@PathVariable String employeeId, @PathVariable int month, @PathVariable int year) {
+        workHoursService.createTestData(employeeId,month,year);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 //
 //    @PostMapping(value = "/sick/duration/{uuid}")
 //    public ResponseEntity<Void> addSickLeave(@RequestBody String dateDuration, @PathVariable String uuid) throws JsonProcessingException {

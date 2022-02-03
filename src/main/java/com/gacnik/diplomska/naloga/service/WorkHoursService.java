@@ -21,6 +21,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalAdjuster;
 import java.time.temporal.TemporalAdjusters;
+import java.time.temporal.TemporalAmount;
 import java.time.temporal.WeekFields;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -103,6 +104,27 @@ public class WorkHoursService {
             day++;
         }
         return hours;
+    }
+
+    // generates a month of workhours with random daily time between 7 & 10 hours
+    public boolean createTestData(String employeeId, int month, int year) {
+        MonthlyWorkHours monthlyWorkHours = new MonthlyWorkHours();
+        monthlyWorkHours.setUuid(employeeId+"_"+ month +"_"+ year);
+        Map<Integer, WorkHours> workHours = new HashMap<>();
+        for (int i = 1; i < 30; i++ ){
+            double generatedDouble = 7.0 + (double) (Math.random() * (10.0 - 7.0));
+            LocalDateTime now;
+            LocalDateTime later;
+            now = LocalDateTime.now();
+            later = LocalDateTime.now().plusMinutes((long)(generatedDouble*60));
+            workHours.put(i, new WorkHours(now, later, WorkHourType.WORK,WorkHoursUtils.calculateWorkTime(now, later)));
+            if(i%5 == 0) {
+                i+=2;
+            }
+        }
+        monthlyWorkHours.setWorkHours(workHours);
+        workHoursRepository.save(monthlyWorkHours);
+        return true;
     }
 //
 //    // can be used for sick leave and vacation
