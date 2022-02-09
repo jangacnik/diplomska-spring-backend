@@ -1,7 +1,7 @@
 package com.gacnik.diplomska.naloga.controller;
 
 import com.gacnik.diplomska.naloga.service.EmployeeService;
-import com.gacnik.diplomska.naloga.service.MonthlyHoursService;
+import com.gacnik.diplomska.naloga.service.MonthlyReportService;
 import com.gacnik.diplomska.naloga.service.WorkHoursService;
 import com.gacnik.diplomska.naloga.util.security.JwtTokenUtil;
 import lombok.AllArgsConstructor;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 public class DummyController {
     private final WorkHoursService workHoursService;
-    private final MonthlyHoursService monthlyHoursService;
+    private final MonthlyReportService monthlyReportService;
     @Autowired
     private final JwtTokenUtil jwtTokenUtil;
     private final EmployeeService employeeService;
@@ -28,7 +28,7 @@ public class DummyController {
 
     @GetMapping("/calcMonth/{month}/{year}")
     public ResponseEntity<Boolean> calcMonthlyHours(@PathVariable String month, @PathVariable String year) {
-        monthlyHoursService.calculateMonthlyHoursDummy(month,year);
+        monthlyReportService.calculateMonthlyHoursDummy(month,year);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

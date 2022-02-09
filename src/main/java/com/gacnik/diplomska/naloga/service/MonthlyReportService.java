@@ -1,22 +1,30 @@
 package com.gacnik.diplomska.naloga.service;
 
+import com.gacnik.diplomska.naloga.controller.EmployeeController;
 import com.gacnik.diplomska.naloga.model.MonthlyHours;
 import com.gacnik.diplomska.naloga.model.MonthlyReport;
 import com.gacnik.diplomska.naloga.model.MonthlyWorkHours;
 import com.gacnik.diplomska.naloga.model.WorkHours;
+import com.gacnik.diplomska.naloga.repo.EmployeeRepository;
 import com.gacnik.diplomska.naloga.repo.MonthlyReportRepository;
 import com.gacnik.diplomska.naloga.repo.WorkHoursRepository;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.*;
 
 @Service
 @AllArgsConstructor
-public class MonthlyHoursService {
+public class MonthlyReportService {
 
     private final WorkHoursRepository workHoursRepository;
     private final MonthlyReportRepository monthlyReportRepository;
+    private final EmployeeRepository employeeRepository;
+    private final Logger log = LoggerFactory.getLogger(MonthlyReport.class);
 
     public void calculateMonthlyHours() {
         Calendar calendar = Calendar.getInstance();
@@ -68,5 +76,23 @@ public class MonthlyHoursService {
         }
         monthlyReport.setMonthlyHoursMap(monthlyHoursMap);
         monthlyReportRepository.save(monthlyReport);
+    }
+
+    public Map<String,Long> getMonthlyHoursForEmployee(String email) {
+        log.warn(email);
+        String id = employeeRepository.findEmployeeByEmail(email).getUuid();
+        Map<String, Long> hoursPerMonth = new HashMap<>();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        int year = calendar.get(Calendar.YEAR);
+        ArrayList<MonthlyReport> monthlyReports = monthlyReportRepository.findAllByUuidContaining(Integer.toString(year));
+        monthlyReports.forEach(monthlyReport -> {
+            String[] splitId = monthlyReport.getUuid().split("_");
+            calendar.set(year, Integer.parseInt(splitId[1]), 1);
+            if(monthlyReport.returnHoursById(id) != null)
+            hoursPerMonth.put(new SimpleDateFormat("MMM").format(calendar.getTime()), monthlyReport.returnHoursById(id).getTotalTime());
+        });
+        log.warn(hoursPerMonth.toString());
+        return hoursPerMonth;
     }
 }

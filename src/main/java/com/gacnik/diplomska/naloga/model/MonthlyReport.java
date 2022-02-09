@@ -16,4 +16,8 @@ public class MonthlyReport {
     @Id
     private String uuid; // month + _ + year
     private Map<String, MonthlyHours> monthlyHoursMap;
+
+    public MonthlyHours returnHoursById(String id) {
+        return monthlyHoursMap.get(id);
+    }
 }

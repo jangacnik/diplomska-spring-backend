@@ -134,15 +134,7 @@ public class WorkHoursService {
         workHoursRepository.save(monthlyWorkHours);
         return true;
     }
-//
-//    // can be used for sick leave and vacation
-//    public void addLeaveAsDuration(List<WorkHours> durationOfLeave) {
-//        workHoursRepository.insert(durationOfLeave);
-//    }
-//
-//    public void addLeaveToday(String uuid, WorkHourType type) {
-//        workHoursRepository.insert(new WorkHours(uuid, LocalDateTime.now(), LocalDateTime.now(), type, Constants.NORMAL_WORK_TIME));
-//    }
+
 //
 //    public List<WorkHours> addTodaysLogs(WorkhourLog[] hours){
 //        List<WorkHours> employeeList = new ArrayList<WorkHours>();
