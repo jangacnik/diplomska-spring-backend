@@ -22,7 +22,7 @@ public class WorkHours {
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime endTime;
     private WorkHourType workHourType;
-    private long totalTime; // in minutes for ease of calculations
+    private Long totalTime; // in minutes for ease of calculations
 
     public WorkHours( LocalDateTime startTime, WorkHourType workHourType) {
         this.startTime = startTime;

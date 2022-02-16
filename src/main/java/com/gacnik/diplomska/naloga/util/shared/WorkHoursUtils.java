@@ -23,7 +23,7 @@ public class WorkHoursUtils {
         List<WorkHours> workHours = new ArrayList<WorkHours>();
         DateDuration durationTmp = mapper.readValue(duration, DateDuration.class);
         for(int i = 0; i < durationTmp.getNumberOfDays(); i++){
-            workHours.add(new WorkHours(uuid, durationTmp.getStartDate().plusDays(i), durationTmp.getStartDate().plusDays(i), workHourType, 8));
+            workHours.add(new WorkHours(uuid, durationTmp.getStartDate().plusDays(i), durationTmp.getStartDate().plusDays(i), workHourType, 8L));
         }
         return workHours;
     }

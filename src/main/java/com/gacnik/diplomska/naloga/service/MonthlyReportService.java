@@ -88,7 +88,7 @@ public class MonthlyReportService {
         ArrayList<MonthlyReport> monthlyReports = monthlyReportRepository.findAllByUuidContaining(Integer.toString(year));
         monthlyReports.forEach(monthlyReport -> {
             String[] splitId = monthlyReport.getUuid().split("_");
-            calendar.set(year, Integer.parseInt(splitId[1]), 1);
+            calendar.set(year, Integer.parseInt(splitId[1])-1, 1);
             if(monthlyReport.returnHoursById(id) != null)
             hoursPerMonth.put(new SimpleDateFormat("MMM").format(calendar.getTime()), monthlyReport.returnHoursById(id).getTotalTime());
         });

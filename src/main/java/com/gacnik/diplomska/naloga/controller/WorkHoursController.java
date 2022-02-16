@@ -44,6 +44,13 @@ public class WorkHoursController {
         Employee employee = employeeService.getEmployeeByEmail(jwtTokenUtil.getUsernameFromToken(token.substring(7)));
         return new ResponseEntity<>(workHoursService.getWorkhoursOfCurrentWeek(employee.getUuid()), HttpStatus.OK);
     }
+
+    @GetMapping("/current")
+    public ResponseEntity<String> getCurrentWorkTime(@RequestHeader (name="Authorization") String token) {
+        Employee employee = employeeService.getEmployeeByEmail(jwtTokenUtil.getUsernameFromToken(token.substring(7)));
+        String t = workHoursService.calculateCurrentWorkTime(employee.getUuid());
+        return new ResponseEntity<>(t, HttpStatus.OK);
+    }
 //
 //    @PostMapping(value = "/sick/duration/{uuid}")
 //    public ResponseEntity<Void> addSickLeave(@RequestBody String dateDuration, @PathVariable String uuid) throws JsonProcessingException {
