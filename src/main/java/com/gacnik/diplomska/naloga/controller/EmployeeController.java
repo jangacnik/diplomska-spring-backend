@@ -13,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -69,7 +70,8 @@ public class EmployeeController {
 
     // posodabljenje delavcev
     @PutMapping(value = "/update", consumes = "application/json")
-    public ResponseEntity<Employee> updateEmployeeInfo(@RequestBody Employee changes) {
+    public ResponseEntity<Employee> updateEmployeeInfo(@RequestBody HashMap<String, String> changes) {
+        log.warn(changes.toString());
             return new ResponseEntity<>(
                     employeeService.updateEmployeeData(changes), HttpStatus.OK);
 

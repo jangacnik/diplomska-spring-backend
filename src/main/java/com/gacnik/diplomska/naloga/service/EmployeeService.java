@@ -4,6 +4,7 @@ import com.gacnik.diplomska.naloga.exceptions.DeviceAlreadyAssignedException;
 import com.gacnik.diplomska.naloga.exceptions.DeviceNotFoundException;
 import com.gacnik.diplomska.naloga.exceptions.EmployeeNotCreatedException;
 import com.gacnik.diplomska.naloga.exceptions.EmployeeNotFoundException;
+import com.gacnik.diplomska.naloga.model.Address;
 import com.gacnik.diplomska.naloga.model.Device;
 import com.gacnik.diplomska.naloga.model.Employee;
 import com.gacnik.diplomska.naloga.repo.EmployeeRepository;
@@ -17,9 +18,7 @@ import org.springframework.stereotype.Service;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -103,11 +102,20 @@ public class EmployeeService {
         return "Employee with " + uuid + " successfully deleted";
     }
 
-    public Employee updateEmployeeData(Employee changes) {
-        if (employeeRepository.findById(changes.getUuid()).isEmpty()) {
-            throw new EmployeeNotFoundException("uuid: " + changes.getUuid());
+    public Employee updateEmployeeData(HashMap<String,String> changes) {
+        Optional<Employee> employeeOptional = employeeRepository.findById(changes.get("id"));
+        if (employeeOptional.isEmpty()) {
+            throw new EmployeeNotFoundException("uuid: " + changes.get("id"));
         }
-        return employeeRepository.save(changes);
+        Employee employee = employeeOptional.get();
+        employee.setSurname(changes.get("surname"));
+        employee.setName(changes.get("name"));
+        Address address = employee.getAddress();
+        address.setCity(changes.get("city"));
+        address.setStreet(changes.get("street"));
+        address.setPostalCode(changes.get("postalCode"));
+        employee.setAddress(address);
+        return employeeRepository.save(employee);
     }
 
     public void addDevice(String uuid, Device deviceId) {
