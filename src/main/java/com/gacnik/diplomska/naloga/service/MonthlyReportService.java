@@ -1,6 +1,5 @@
 package com.gacnik.diplomska.naloga.service;
 
-import com.gacnik.diplomska.naloga.controller.EmployeeController;
 import com.gacnik.diplomska.naloga.model.MonthlyHours;
 import com.gacnik.diplomska.naloga.model.MonthlyReport;
 import com.gacnik.diplomska.naloga.model.MonthlyWorkHours;
@@ -14,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -23,6 +21,7 @@ public class MonthlyReportService {
 
     private final WorkHoursRepository workHoursRepository;
     private final MonthlyReportRepository monthlyReportRepository;
+    private final MonthlyReportRepository mo;
     private final EmployeeRepository employeeRepository;
     private final Logger log = LoggerFactory.getLogger(MonthlyReport.class);
 
@@ -95,4 +94,7 @@ public class MonthlyReportService {
         log.warn(hoursPerMonth.toString());
         return hoursPerMonth;
     }
+
 }
+
+

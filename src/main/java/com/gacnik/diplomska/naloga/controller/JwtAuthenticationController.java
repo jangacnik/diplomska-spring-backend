@@ -5,10 +5,11 @@ import com.gacnik.diplomska.naloga.model.security.JwtResponse;
 import com.gacnik.diplomska.naloga.service.JWTUserDetailsService;
 import com.gacnik.diplomska.naloga.util.security.CustomAuthenticationManager;
 import com.gacnik.diplomska.naloga.util.security.JwtTokenUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,19 +31,17 @@ public class JwtAuthenticationController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    private final Logger log = LoggerFactory.getLogger(JwtAuthenticationController.class);
+
+
     @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
-        final String psw = passwordEncoder.encode(authenticationRequest.getPassword());
-        System.out.println( );
         authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
-
         final UserDetails userDetails = userDetailsService
                 .loadUserByUsername(authenticationRequest.getUsername());
-
-
         final String token = jwtTokenUtil.generateToken(userDetails);
         final String refreshToken = jwtTokenUtil.generateRefreshToken(userDetails);
-
+        log.info("Authentication token created for user {}", userDetails.getUsername());
         return ResponseEntity.ok(new JwtResponse(token, refreshToken));
     }
 
@@ -53,8 +52,10 @@ public class JwtAuthenticationController {
         if (jwtTokenUtil.validateToken(token, userDetails)) {
             final String newToken = jwtTokenUtil.generateToken(userDetails);
             final String refreshToken = jwtTokenUtil.generateRefreshToken(userDetails);
+            log.info("User {} requested refresh of authentication token", username);
             return ResponseEntity.ok(new JwtResponse(newToken, refreshToken));
         }
+        log.warn("User {} requested refresh of token, but was unauthorized", username);
         return ResponseEntity.badRequest().body(new ResponseEntity<String>(HttpStatus.UNAUTHORIZED));
     }
 

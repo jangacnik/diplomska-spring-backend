@@ -22,13 +22,10 @@ import java.util.List;
 public class EmployeeController {
 
     private final EmployeeService employeeService;
-
-
     private final Logger log = LoggerFactory.getLogger(EmployeeController.class);
 
     @Autowired
     private final JwtTokenUtil jwtTokenUtil;
-
 
     //pridobi vse delavce
     @GetMapping("/all")
@@ -39,7 +36,6 @@ public class EmployeeController {
     // vrni podatke o trenutnem uporabniku preko JWT zetona
     @GetMapping("/user")
     public ResponseEntity<Employee> fetchUserData(@RequestHeader (name="Authorization") String token) {
-//        log.warn(token);
         return new ResponseEntity<>(employeeService.getEmployeeByEmail(jwtTokenUtil.getUsernameFromToken(token.substring(7))), HttpStatus.OK);
     }
 
@@ -65,18 +61,18 @@ public class EmployeeController {
     @PostMapping(value = "/new",consumes = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Void> addNewEmployee(@RequestBody Employee employee) {
         employeeService.addNewEmployee(employee);
+        log.info("New user was created with name: {} {}", employee.getName(), employee.getSurname());
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     // posodabljenje delavcev
     @PutMapping(value = "/update", consumes = "application/json")
     public ResponseEntity<Employee> updateEmployeeInfo(@RequestBody HashMap<String, String> changes) {
-        log.warn(changes.toString());
+        log.info("Employee info of user with ID: '{}' was updated. Changes: {}",changes.get("id"),changes);
             return new ResponseEntity<>(
                     employeeService.updateEmployeeData(changes), HttpStatus.OK);
 
     }
-
 
     // odstranjevanje delavcev
     @DeleteMapping("/delete/{uuid}")
@@ -84,17 +80,18 @@ public class EmployeeController {
         return new ResponseEntity<>(employeeService.deleteEmployee(uuid), HttpStatus.ACCEPTED);
     }
 
-
     //dodajanje naprav
     @PostMapping(value = "/add/device/{uuid}")
     public ResponseEntity<Void> addNewDevice(@PathVariable String uuid, @RequestBody Device deviceId){
         employeeService.addDevice(uuid, deviceId);
+        log.info("Device: {} was added for user with ID: '{}'", deviceId, uuid);
         return new ResponseEntity<>(HttpStatus.OK);
     }
     //odstranjevanje naprav
     @DeleteMapping(value = "/delete/device/{uuid}")
     public ResponseEntity<Void> deleteDevice(@PathVariable String uuid, @RequestBody Device deviceId) {
         employeeService.deleteDevice(uuid, deviceId);
+        log.info("Device: {} was removed for user with ID: '{}'", deviceId, uuid);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -112,6 +109,7 @@ public class EmployeeController {
     @DeleteMapping(value = "/delete/devices/{uuid}")
     public ResponseEntity<Void> deleteAllDevicesOfEmployee(@PathVariable String uuid){
         employeeService.deleteAllDevicesOfEmployee(uuid);
+        log.info("All devices were removed for user with ID: '{}'", uuid);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

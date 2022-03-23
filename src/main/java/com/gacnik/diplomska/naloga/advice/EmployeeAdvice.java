@@ -5,13 +5,11 @@ import com.gacnik.diplomska.naloga.exceptions.DeviceAlreadyAssignedException;
 import com.gacnik.diplomska.naloga.exceptions.DeviceNotFoundException;
 import com.gacnik.diplomska.naloga.exceptions.EmployeeNotCreatedException;
 import com.gacnik.diplomska.naloga.exceptions.EmployeeNotFoundException;
-import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.yaml.snakeyaml.constructor.ConstructorException;
 
 import javax.validation.ConstraintViolationException;
 
@@ -41,6 +39,7 @@ public class EmployeeAdvice {
     String deviceAlreadyAssignedExceptionHandler(DeviceAlreadyAssignedException ex) {
         return ex.getMessage();
     }
+
     @ResponseBody
     @ExceptionHandler(DeviceNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)

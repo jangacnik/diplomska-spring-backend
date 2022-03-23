@@ -1,7 +1,6 @@
 package com.gacnik.diplomska.naloga.util.security;
 
 import com.gacnik.diplomska.naloga.model.Employee;
-import com.gacnik.diplomska.naloga.repo.EmployeeRepository;
 import com.gacnik.diplomska.naloga.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,7 +11,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 @Service
 public class CustomAuthenticationManager  implements AuthenticationManager {
     @Autowired
