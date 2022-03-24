@@ -2,6 +2,7 @@ package com.gacnik.diplomska.naloga.service;
 
 import com.gacnik.diplomska.naloga.exceptions.EmployeeNotFoundException;
 import com.gacnik.diplomska.naloga.model.MonthlyWorkHours;
+import com.gacnik.diplomska.naloga.model.WorkHoursBreaks;
 import com.gacnik.diplomska.naloga.model.enums.WorkHourType;
 import com.gacnik.diplomska.naloga.model.WorkHours;
 import com.gacnik.diplomska.naloga.repo.WorkHoursRepository;
@@ -25,12 +26,11 @@ public class WorkHoursService {
     private final Logger log = LoggerFactory.getLogger(WorkHoursService.class);
     private final WorkHoursRepository workHoursRepository;
 
-
-    public String addNewEntry(String uuid, WorkHourType workHourType) {
+    public String addNewEntry(String id, WorkHourType workHourType) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
-        log.warn(uuid + "_" + calendar.get(Calendar.MONTH) + "_" + calendar.get(Calendar.YEAR));
-        Optional<MonthlyWorkHours> monthlyWorkHoursOptional = workHoursRepository.findById(uuid + "_" + calendar.get(Calendar.MONTH) + "_" + calendar.get(Calendar.YEAR));
+        log.warn(id + "_" + calendar.get(Calendar.MONTH) + "_" + calendar.get(Calendar.YEAR));
+        Optional<MonthlyWorkHours> monthlyWorkHoursOptional = workHoursRepository.findById(id + "_" + calendar.get(Calendar.MONTH) + "_" + calendar.get(Calendar.YEAR));
         if (monthlyWorkHoursOptional.isPresent()) {
             MonthlyWorkHours monthlyWorkHours = monthlyWorkHoursOptional.get();
             Map<Integer, WorkHours> workHours = monthlyWorkHours.getWorkHours();
@@ -39,7 +39,7 @@ public class WorkHoursService {
             return workHoursRepository.save(monthlyWorkHours).toString();
         } else {
             MonthlyWorkHours monthlyWorkHours = new MonthlyWorkHours();
-            monthlyWorkHours.setUuid(uuid + "_" + calendar.get(Calendar.MONTH) + "_" + calendar.get(Calendar.YEAR));
+            monthlyWorkHours.setUuid(id + "_" + calendar.get(Calendar.MONTH) + "_" + calendar.get(Calendar.YEAR));
             Map<Integer, WorkHours> workHours = new HashMap<>();
             workHours.put(calendar.get(Calendar.DATE), new WorkHours(LocalDateTime.now(), workHourType));
             monthlyWorkHours.setWorkHours(workHours);
@@ -47,10 +47,10 @@ public class WorkHoursService {
         }
     }
 
-    public MonthlyWorkHours endEntry(String uuid) throws Exception {
+    public MonthlyWorkHours endEntry(String id) throws Exception {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
-        Optional<MonthlyWorkHours> monthlyWorkHoursOptional = workHoursRepository.findById(uuid + "_" + calendar.get(Calendar.MONTH) + "_" + calendar.get(Calendar.YEAR));
+        Optional<MonthlyWorkHours> monthlyWorkHoursOptional = workHoursRepository.findById(id + "_" + calendar.get(Calendar.MONTH) + "_" + calendar.get(Calendar.YEAR));
         if (monthlyWorkHoursOptional.isEmpty()) {
             throw new EmployeeNotFoundException("No start entry found for this employee");
         }
@@ -61,14 +61,55 @@ public class WorkHoursService {
         }
         WorkHours today = workHours.get(calendar.get(Calendar.DATE));
         today.setEndTime(LocalDateTime.now());
-        today.setTotalTime(WorkHoursUtils.calculateWorkTime(today.getStartTime(), today.getEndTime()));
+        today.setBreakTime(WorkHoursUtils.calculateTotalBreakTime(today.getBreaks()));
+        today.setTotalTime(WorkHoursUtils.calculateWorkTime(today.getStartTime(), today.getEndTime()) + 30L - today.getBreakTime());
         workHours.put(Calendar.DATE, today);
         monthlyWorkHours.setWorkHours(workHours);
         return workHoursRepository.save(monthlyWorkHours);
     }
 
+    public String addNewBreak(String id) throws Exception {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        Optional<MonthlyWorkHours> monthlyWorkHoursOptional = workHoursRepository.findById(id + "_" + calendar.get(Calendar.MONTH) + "_" + calendar.get(Calendar.YEAR));
+        if (monthlyWorkHoursOptional.isPresent()) {
+            MonthlyWorkHours monthlyWorkHours = monthlyWorkHoursOptional.get();
+            Map<Integer, WorkHours> workHours = monthlyWorkHours.getWorkHours();
+            WorkHours today = workHours.get(calendar.get(Calendar.DATE));
+            if(today.getBreaks().stream().anyMatch(p -> p.getEndTime() == null)) {
+                return "Cannot start new break, last break is still active";
+            }
+            today.getBreaks().add(new WorkHoursBreaks(LocalDateTime.now()));
+            workHours.put(Calendar.DATE, today);
+            monthlyWorkHours.setWorkHours(workHours);
+            workHoursRepository.save(monthlyWorkHours);
+            return "New break started at " + today.getBreaks().get(today.getBreaks().size()-1).getStartTime().toString();
+        }
+        throw new Exception("Work hours not started for today"); // create new expetion
+    }
+
+    public String endBreak(String id) throws Exception {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        Optional<MonthlyWorkHours> monthlyWorkHoursOptional = workHoursRepository.findById(id + "_" + calendar.get(Calendar.MONTH) + "_" + calendar.get(Calendar.YEAR));
+        if (monthlyWorkHoursOptional.isPresent()) {
+            MonthlyWorkHours monthlyWorkHours = monthlyWorkHoursOptional.get();
+            Map<Integer, WorkHours> workHours = monthlyWorkHours.getWorkHours();
+            WorkHours today = workHours.get(calendar.get(Calendar.DATE));
+            if(today.getBreaks().stream().anyMatch(p -> p.getEndTime() != null)) {
+                return "Cannot end break as no break is active";
+            }
+            today.getBreaks().get(today.getBreaks().size()-1).setEndTime(LocalDateTime.now());
+            workHours.put(Calendar.DATE, today);
+            monthlyWorkHours.setWorkHours(workHours);
+            workHoursRepository.save(monthlyWorkHours);
+            return "Break ended at " + today.getBreaks().get(today.getBreaks().size()-1).getStartTime().toString();
+        }
+        throw new Exception("Work hours not started for today"); // create new expetion
+    }
+
     // returns map of hours in long for the current week
-    public Map<DayOfWeek, Long> getWorkhoursOfCurrentWeek(String employeeUuid) {
+    public Map<DayOfWeek, Long> getWorkhoursOfCurrentWeek(String id) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
         MonthlyWorkHours monthlyWorkHoursPrev;
@@ -80,9 +121,9 @@ public class WorkHoursService {
         log.warn(monday + "/" + sunday);
         // if months differ
         if (monday.getMonth() != sunday.getMonth()) {
-            log.warn(employeeUuid + "_" + monday.getMonth().getValue() + "_" + monday.getYear());
+            log.warn(id + "_" + monday.getMonth().getValue() + "_" + monday.getYear());
             // fetch hours of previous month depending on monday date
-            Optional<MonthlyWorkHours> monthlyWorkHoursPrevOpt = workHoursRepository.findById(employeeUuid + "_" + monday.getMonth().getValue() + "_" + monday.getYear());
+            Optional<MonthlyWorkHours> monthlyWorkHoursPrevOpt = workHoursRepository.findById(id + "_" + monday.getMonth().getValue() + "_" + monday.getYear());
             // map all dates with dayOfMonth >= monday.dayOfMonth
             if (monthlyWorkHoursPrevOpt.isPresent()) {
                 monthlyWorkHoursPrev = monthlyWorkHoursPrevOpt.get();
@@ -92,7 +133,7 @@ public class WorkHoursService {
                 mapPrev.forEach((k, v) -> hours.put(LocalDate.of(monday.getYear(), monday.getMonth(), k).getDayOfWeek(), v.getTotalTime()));
             }
             // map all dates with dayOfMonth >= sunday.dayOfMonth
-            Optional<MonthlyWorkHours> monthlyWorkHoursNextOpt = workHoursRepository.findById(employeeUuid + "_" + sunday.getMonth().getValue() + "_" + sunday.getYear());
+            Optional<MonthlyWorkHours> monthlyWorkHoursNextOpt = workHoursRepository.findById(id + "_" + sunday.getMonth().getValue() + "_" + sunday.getYear());
             if (monthlyWorkHoursNextOpt.isPresent()) {
                 monthlyWorkHours = monthlyWorkHoursNextOpt.get();
                 Map<Integer, WorkHours> mapNext = monthlyWorkHours.getWorkHours().entrySet().stream().filter(x -> x.getKey() <= sunday.getDayOfMonth())
@@ -103,7 +144,7 @@ public class WorkHoursService {
             return hours;
         }
         // if months dont differ, fetch current month hours and map them to hours
-        Optional<MonthlyWorkHours> monthlyWorkHoursOptional = workHoursRepository.findById(employeeUuid + "_" + calendar.get(Calendar.MONTH) + "_" + calendar.get(Calendar.YEAR));
+        Optional<MonthlyWorkHours> monthlyWorkHoursOptional = workHoursRepository.findById(id + "_" + calendar.get(Calendar.MONTH) + "_" + calendar.get(Calendar.YEAR));
         monthlyWorkHoursOptional.ifPresent(workHours -> workHours.getWorkHours().forEach((k, v) -> hours.put(LocalDate.of(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), k).getDayOfWeek(), v.getTotalTime())));
         return hours;
     }
@@ -129,23 +170,29 @@ public class WorkHoursService {
         return true;
     }
 
-    public String calculateCurrentWorkTime(String employeeId) {
+    public String calculateCurrentWorkTime(String id) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
-        log.warn(employeeId + "_" + (calendar.get(Calendar.MONTH) + 1) + "_" + calendar.get(Calendar.YEAR));
-        Optional<MonthlyWorkHours> monthlyWorkHoursOptional = workHoursRepository.findById(employeeId + "_" + (calendar.get(Calendar.MONTH) + 1) + "_" + calendar.get(Calendar.YEAR));
+        log.warn(id + "_" + (calendar.get(Calendar.MONTH) + 1) + "_" + calendar.get(Calendar.YEAR));
+        Optional<MonthlyWorkHours> monthlyWorkHoursOptional = workHoursRepository.findById(id + "_" + (calendar.get(Calendar.MONTH) + 1) + "_" + calendar.get(Calendar.YEAR));
         if (monthlyWorkHoursOptional.isPresent()) {
             WorkHours workHours = monthlyWorkHoursOptional.get().getWorkHours().get(calendar.get(Calendar.DATE));
             if (workHours.getTotalTime() != null) {
                 return workHours.getTotalTime().toString();
             }
-            Long t = WorkHoursUtils.calculateWorkTime(workHours.getStartTime(), LocalDateTime.now());
-            return t.toString();
+            long t = WorkHoursUtils.calculateWorkTime(workHours.getStartTime(), LocalDateTime.now());
+            long breakTime = 0;
+            for (WorkHoursBreaks breaks : workHours.getBreaks()) {
+                breakTime += WorkHoursUtils.calculateWorkTime(breaks.getStartTime(), breaks.getEndTime());
+            }
+            if (breakTime > 30L) {
+                return Long.toString(t + 30L - breakTime);
+            }
+            return Long.toString(t);
         } else {
             throw new EmployeeNotFoundException("Not found");
         }
     }
-
 
     public Boolean getEmployeeStatus(String id) {
 
@@ -161,24 +208,4 @@ public class WorkHoursService {
         return hoursPerMonth.get(calendar.get(Calendar.DATE)) != null && hoursPerMonth.get(calendar.get(Calendar.DATE)).getEndTime() == null;
     }
 
-//
-//    public List<WorkHours> addTodaysLogs(WorkhourLog[] hours){
-//        List<WorkHours> employeeList = new ArrayList<WorkHours>();
-//        for (WorkhourLog workHour: hours
-//             ) {
-//            employeeList.add(workHoursRepository.insert(
-//                    new WorkHours(
-//                            workHour.getEmployeeUuid(),
-//                            workHour.getStartTime(),
-//                            workHour.getLastPing(),
-//                            WorkHourType.WORK,
-//                            WorkHoursUtils.calculateWorkTime(workHour.getStartTime(), workHour.getLastPing())
-//                        )
-//                    )
-//            );
-//
-//
-//        }
-//        return employeeList;
-//    }
 }

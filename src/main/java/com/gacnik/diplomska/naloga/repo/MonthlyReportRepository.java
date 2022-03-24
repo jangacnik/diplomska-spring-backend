@@ -5,11 +5,12 @@ import com.gacnik.diplomska.naloga.model.MonthlyHours;
 import com.gacnik.diplomska.naloga.model.MonthlyReport;
 import com.gacnik.diplomska.naloga.model.WorkHours;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
+@Repository
 public interface MonthlyReportRepository extends MongoRepository<MonthlyReport, String> {
     ArrayList<MonthlyReport> findAllByUuidContaining(String substr);
 }

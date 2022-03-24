@@ -34,6 +34,16 @@ public class WorkHoursController {
         return new ResponseEntity<>(workHoursService.endEntry(uuid), HttpStatus.OK);
     }
 
+    @PostMapping(value = "/break/start/{uuid}")
+    public ResponseEntity<String> addNewBreak(@PathVariable String uuid) throws Exception {
+        return new ResponseEntity<>(workHoursService.addNewBreak(uuid), HttpStatus.OK);
+    }
+
+    @PutMapping("/break/end/{uuid}")
+    public ResponseEntity<String> endBreak(@PathVariable String uuid) throws Exception {
+        return new ResponseEntity<>(workHoursService.endBreak(uuid), HttpStatus.OK);
+    }
+
     @GetMapping("/status")
     public ResponseEntity<Boolean> workStatus(@RequestHeader (name="Authorization") String token) {
         Employee employee = employeeService.getEmployeeByEmail(jwtTokenUtil.getUsernameFromToken(token.substring(7)));

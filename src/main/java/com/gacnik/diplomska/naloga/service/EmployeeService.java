@@ -9,7 +9,6 @@ import com.gacnik.diplomska.naloga.model.Device;
 import com.gacnik.diplomska.naloga.model.Employee;
 import com.gacnik.diplomska.naloga.repo.EmployeeRepository;
 import com.gacnik.diplomska.naloga.util.shared.Roles;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,23 +18,27 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
-@AllArgsConstructor
 public class EmployeeService {
 
     private final EmployeeRepository employeeRepository;
     private final Validator validator;
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
+
+    public EmployeeService(EmployeeRepository employeeRepository, Validator validator, PasswordEncoder passwordEncoder) {
+        this.employeeRepository = employeeRepository;
+        this.validator = validator;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     public List<Employee> getAllEmployees() {
         return employeeRepository.findAll();
     }
 
-    public Employee getEmployeeById(String uuid) {
-        return employeeRepository.findById(uuid).orElseThrow(() -> new EmployeeNotFoundException("uuid: " + uuid)
+    public Employee getEmployeeById(String id) {
+        return employeeRepository.findById(id).orElseThrow(() -> new EmployeeNotFoundException("id: " + id)
         );
     }
 
@@ -94,12 +97,12 @@ public class EmployeeService {
         throw new EmployeeNotCreatedException(" employee with E-mail, Phone number or Device ID already exists");
     }
 
-    public String deleteEmployee(String uuid) {
-        if (employeeRepository.findById(uuid).isEmpty()) {
-            throw new EmployeeNotFoundException(uuid);
+    public String deleteEmployee(String id) {
+        if (employeeRepository.findById(id).isEmpty()) {
+            throw new EmployeeNotFoundException(id);
         }
-        employeeRepository.deleteById(uuid);
-        return "Employee with " + uuid + " successfully deleted";
+        employeeRepository.deleteById(id);
+        return "Employee with " + id + " successfully deleted";
     }
 
     public Employee updateEmployeeData(HashMap<String,String> changes) {
@@ -118,8 +121,8 @@ public class EmployeeService {
         return employeeRepository.save(employee);
     }
 
-    public void addDevice(String uuid, Device deviceId) {
-        Employee employee = employeeRepository.findById(uuid).orElseThrow(() -> new EmployeeNotFoundException("uuid: " + uuid));
+    public void addDevice(String id, Device deviceId) {
+        Employee employee = employeeRepository.findById(id).orElseThrow(() -> new EmployeeNotFoundException("id: " + id));
         if (!employee.getDeviceId().contains(deviceId)) {
             employee.getDeviceId().add(deviceId);
             employeeRepository.save(employee);
@@ -127,8 +130,8 @@ public class EmployeeService {
         throw new DeviceAlreadyAssignedException(deviceId.getMac());
     }
 
-    public void deleteDevice(String uuid, Device deviceId) {
-        Employee employee = employeeRepository.findById(uuid).orElseThrow(() -> new EmployeeNotFoundException("uuid: " + uuid));
+    public void deleteDevice(String id, Device deviceId) {
+        Employee employee = employeeRepository.findById(id).orElseThrow(() -> new EmployeeNotFoundException("id: " + id));
         if (employee.getDeviceId().contains(deviceId)) {
             employee.getDeviceId().add(deviceId);
             employeeRepository.save(employee);
@@ -136,18 +139,18 @@ public class EmployeeService {
         throw new DeviceNotFoundException(deviceId.getMac());
     }
 
-    public List<Device> getAllDevicesByEmployee(String uuid) {
-        Employee employee = employeeRepository.findById(uuid).orElseThrow(() -> new EmployeeNotFoundException("uuid: " + uuid));
+    public List<Device> getAllDevicesByEmployee(String id) {
+        Employee employee = employeeRepository.findById(id).orElseThrow(() -> new EmployeeNotFoundException("id: " + id));
         return employee.getDeviceId();
     }
 
-    public void deleteAllDevicesOfEmployee(String uuid) {
-        Employee employee = employeeRepository.findById(uuid).orElseThrow(() -> new EmployeeNotFoundException("uuid: " + uuid));
+    public void deleteAllDevicesOfEmployee(String id) {
+        Employee employee = employeeRepository.findById(id).orElseThrow(() -> new EmployeeNotFoundException("id: " + id));
         employee.setDeviceId(new ArrayList<Device>());
         employeeRepository.save(employee);
     }
 
-    public Employee findEmployeeByDeviceId(String deviceID) {
-        return employeeRepository.findEmployeeByDeviceIdContaining(deviceID);
+    public Employee findEmployeeByDeviceId(String deviceId) {
+        return employeeRepository.findEmployeeByDeviceIdContaining(deviceId);
     }
 }

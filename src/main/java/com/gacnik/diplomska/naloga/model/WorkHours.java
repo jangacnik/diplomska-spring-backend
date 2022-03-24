@@ -7,6 +7,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 @Data
 @Document(collection = "workHours")
@@ -22,6 +23,8 @@ public class WorkHours {
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime endTime;
     private WorkHourType workHourType;
+    private ArrayList<WorkHoursBreaks> breaks;
+    private Long breakTime;
     private Long totalTime; // in minutes for ease of calculations
 
     public WorkHours( LocalDateTime startTime, WorkHourType workHourType) {

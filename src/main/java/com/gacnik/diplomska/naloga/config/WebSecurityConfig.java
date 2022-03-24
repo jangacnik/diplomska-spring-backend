@@ -56,12 +56,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         // We don't need CSRF for this example
         httpSecurity.csrf().disable()
                 // dont authenticate this particular request
-                .authorizeRequests().antMatchers("/authenticate*", "/refresh/**")
+                .authorizeRequests().antMatchers("/authenticate**", "/refresh/**", "/api/v1/employees/**")
                 .permitAll()
                 // only access for admins
-                .antMatchers("/api/v1/admin/**").hasAuthority(Roles.ADMIN.toString()).
-                // accessible to all logged in users
-                        antMatchers("/api/v1/employees/**").hasAnyAuthority(Roles.USER.toString(),Roles.ADMIN.toString())
+//                .antMatchers("/api/v1/admin/**").hasAuthority(Roles.ADMIN.toString()).
+//                // accessible to all logged in users
+//                        antMatchers("/api/v1/employees/**").hasAnyAuthority(Roles.USER.toString(),Roles.ADMIN.toString())
                 .and().
                 // make sure we use stateless session; session won't be used to
                 // store user's state.
