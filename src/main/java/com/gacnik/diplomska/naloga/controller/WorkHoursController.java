@@ -45,9 +45,9 @@ public class WorkHoursController {
     }
 
     @GetMapping("/status")
-    public ResponseEntity<Boolean> workStatus(@RequestHeader (name="Authorization") String token) {
+    public ResponseEntity<String> workStatus(@RequestHeader (name="Authorization") String token) {
         Employee employee = employeeService.getEmployeeByEmail(jwtTokenUtil.getUsernameFromToken(token.substring(7)));
-        return new ResponseEntity<Boolean>(workHoursService.getEmployeeStatus(employee.getUuid()), HttpStatus.OK);
+        return new ResponseEntity<String>(workHoursService.checkStatus(employee.getUuid()), HttpStatus.OK);
     }
 
 

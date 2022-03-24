@@ -30,7 +30,7 @@ public class MonthlyReportService {
         calendar.setTime(new Date());
         MonthlyReport monthlyReport = new MonthlyReport("monthlyReport_"+calendar.get(Calendar.MONTH) + "_" + calendar.get(Calendar.YEAR), new HashMap<>());
         Map<String, MonthlyHours> monthlyHoursMap = new HashMap<>();
-        ArrayList<MonthlyWorkHours> monthlyWorkHours = workHoursRepository.findAllByUuidContaining(calendar.get(Calendar.MONTH) + "_" + calendar.get(Calendar.YEAR));
+        ArrayList<MonthlyWorkHours> monthlyWorkHours = workHoursRepository.findAllByUuidContaining((calendar.get(Calendar.MONTH)+1) + "_" + calendar.get(Calendar.YEAR));
         for (MonthlyWorkHours hours : monthlyWorkHours
         ) {
             String[] employeeUuid = hours.getUuid().split("_");
@@ -91,7 +91,6 @@ public class MonthlyReportService {
             if(monthlyReport.returnHoursById(id) != null)
             hoursPerMonth.put(new SimpleDateFormat("MMM").format(calendar.getTime()), monthlyReport.returnHoursById(id).getTotalTime());
         });
-        log.warn(hoursPerMonth.toString());
         return hoursPerMonth;
     }
 
