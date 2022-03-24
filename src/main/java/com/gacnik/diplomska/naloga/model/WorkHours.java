@@ -11,11 +11,10 @@ import java.util.ArrayList;
 
 @Data
 @Document(collection = "workHours")
-@Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class WorkHours {
+
     @Id
     private String uuid; // id is day of the month
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
@@ -50,6 +49,22 @@ public class WorkHours {
         this.workHourType = workHourType;
         this.totalTime = totalTime;
     }
+    public WorkHours( LocalDateTime startTime, LocalDateTime endTime, WorkHourType workHourType, long totalTime, ArrayList<WorkHoursBreaks> workHoursBreaks) {
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.workHourType = workHourType;
+        this.totalTime = totalTime;
+        this.breaks = workHoursBreaks;
+    }
 
 
+
+    public WorkHours(LocalDateTime startTime, LocalDateTime endTime, WorkHourType workHourType, ArrayList<WorkHoursBreaks> breaks, Long breakTime, Long totalTime) {
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.workHourType = workHourType;
+        this.breaks = breaks;
+        this.breakTime = breakTime;
+        this.totalTime = totalTime;
+    }
 }

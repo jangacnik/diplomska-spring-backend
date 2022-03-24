@@ -60,10 +60,20 @@ public class WorkHoursService {
             throw new Exception("Work hours not started for today"); // create new expetion
         }
         WorkHours today = workHours.get(calendar.get(Calendar.DATE));
+        today.setBreakTime(0L);
+        if(today.getBreaks()!=null && today.getBreaks().size() > 0) {
+            if (today.getBreaks().get(today.getBreaks().size()-1).getEndTime() == null) {
+                today.getBreaks().get(today.getBreaks().size()-1).setEndTime(LocalDateTime.now());
+            }
+            today.setBreakTime(WorkHoursUtils.calculateTotalBreakTime(today.getBreaks()));
+        }
         today.setEndTime(LocalDateTime.now());
-        today.setBreakTime(WorkHoursUtils.calculateTotalBreakTime(today.getBreaks()));
-        today.setTotalTime(WorkHoursUtils.calculateWorkTime(today.getStartTime(), today.getEndTime()) + 30L - today.getBreakTime());
-        workHours.put(Calendar.DATE, today);
+        if(today.getBreakTime() > 30L) {
+            today.setTotalTime(WorkHoursUtils.calculateWorkTime(today.getStartTime(), today.getEndTime()) + 30L - today.getBreakTime());
+        } else {
+            today.setTotalTime(WorkHoursUtils.calculateWorkTime(today.getStartTime(), today.getEndTime()));
+        }
+        workHours.put(calendar.get(Calendar.DATE), today);
         monthlyWorkHours.setWorkHours(workHours);
         return workHoursRepository.save(monthlyWorkHours);
     }
@@ -76,11 +86,14 @@ public class WorkHoursService {
             MonthlyWorkHours monthlyWorkHours = monthlyWorkHoursOptional.get();
             Map<Integer, WorkHours> workHours = monthlyWorkHours.getWorkHours();
             WorkHours today = workHours.get(calendar.get(Calendar.DATE));
-            if(today.getBreaks().stream().anyMatch(p -> p.getEndTime() == null)) {
+            if(today.getBreaks() == null) {
+                today.setBreaks(new ArrayList<WorkHoursBreaks>());
+            }
+            if(today.getBreaks().size() > 0 && today.getBreaks().stream().anyMatch(p -> p.getEndTime() == null)) {
                 return "Cannot start new break, last break is still active";
             }
             today.getBreaks().add(new WorkHoursBreaks(LocalDateTime.now()));
-            workHours.put(Calendar.DATE, today);
+            workHours.put(calendar.get(Calendar.DATE), today);
             monthlyWorkHours.setWorkHours(workHours);
             workHoursRepository.save(monthlyWorkHours);
             return "New break started at " + today.getBreaks().get(today.getBreaks().size()-1).getStartTime().toString();
@@ -96,11 +109,11 @@ public class WorkHoursService {
             MonthlyWorkHours monthlyWorkHours = monthlyWorkHoursOptional.get();
             Map<Integer, WorkHours> workHours = monthlyWorkHours.getWorkHours();
             WorkHours today = workHours.get(calendar.get(Calendar.DATE));
-            if(today.getBreaks().stream().anyMatch(p -> p.getEndTime() != null)) {
+            if(today.getBreaks() == null || today.getBreaks().stream().anyMatch(p -> p.getEndTime() != null)) {
                 return "Cannot end break as no break is active";
             }
             today.getBreaks().get(today.getBreaks().size()-1).setEndTime(LocalDateTime.now());
-            workHours.put(Calendar.DATE, today);
+            workHours.put(calendar.get(Calendar.DATE), today);
             monthlyWorkHours.setWorkHours(workHours);
             workHoursRepository.save(monthlyWorkHours);
             return "Break ended at " + today.getBreaks().get(today.getBreaks().size()-1).getStartTime().toString();
@@ -160,7 +173,17 @@ public class WorkHoursService {
             LocalDateTime later;
             now = LocalDateTime.now();
             later = LocalDateTime.now().plusMinutes((long) (generatedDouble * 60));
-            workHours.put(i, new WorkHours(now, later, WorkHourType.WORK, WorkHoursUtils.calculateWorkTime(now, later)));
+            ArrayList<WorkHoursBreaks> workHoursBreaks = new ArrayList<>();
+            int numberOfBreaks = new Random().nextInt(3) + 1;
+            for(int j = 0; j < numberOfBreaks; j++) {
+                workHoursBreaks.add(new WorkHoursBreaks(LocalDateTime.now(), LocalDateTime.now().plusMinutes(new Random().nextInt(60))));
+            }
+            Long totalBreakTime = WorkHoursUtils.calculateTotalBreakTime(workHoursBreaks);
+            Long totalWorkTime = WorkHoursUtils.calculateWorkTime(now, later);
+            if(totalBreakTime > 30L) {
+                totalWorkTime += 30L - totalBreakTime;
+            }
+            workHours.put(i, new WorkHours(now, later, WorkHourType.WORK, workHoursBreaks,totalBreakTime ,totalWorkTime ));
             if (i % 5 == 0) {
                 i += 2;
             }
