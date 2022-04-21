@@ -33,20 +33,17 @@ public class JwtAuthenticationController {
 
     private final Logger log = LoggerFactory.getLogger(JwtAuthenticationController.class);
 
-
-    @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
+    @PostMapping("/authenticate")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
-        log.info(authenticationRequest.toString());
         authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
         final UserDetails userDetails = userDetailsService
                 .loadUserByUsername(authenticationRequest.getUsername());
         final String token = jwtTokenUtil.generateToken(userDetails);
         final String refreshToken = jwtTokenUtil.generateRefreshToken(userDetails);
-        log.info("Authentication token created for user {}", userDetails.getUsername());
         return ResponseEntity.ok(new JwtResponse(token, refreshToken));
     }
 
-    @RequestMapping(value = "/refresh", method = RequestMethod.GET)
+    @GetMapping("/refresh")
     public ResponseEntity<?> refreshToken(@RequestHeader String token) {
         String username = jwtTokenUtil.getUsernameFromToken(token);
         UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);

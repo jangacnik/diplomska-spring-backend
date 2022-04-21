@@ -19,7 +19,7 @@ public interface EmployeeRepository extends MongoRepository<Employee, String> {
     Employee findEmployeeByDeviceIdContaining(String id);
 
     @Query(value = "{ 'deviceId.mac' : ?0 }", fields = "{ 'deviceId.mac' : 0 }")
-    List<Employee> findEmployeeByDeviceIdMac(String devices);
+    Optional<List<Employee>> findEmployeeByDeviceIdMac(String devices);
 
 
 

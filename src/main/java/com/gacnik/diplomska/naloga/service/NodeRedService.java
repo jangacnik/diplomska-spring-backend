@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class NodeRedService {
@@ -18,22 +19,22 @@ public class NodeRedService {
     private EmployeeRepository employeeRepository;
     public void recordTimeByNetworkDevices(MacRequest macRequest) throws Exception {
         for(String macAddress: macRequest.getNewDevices()) {
-            List<Employee> employeeList = employeeRepository.findEmployeeByDeviceIdMac(macAddress);
-            if(!employeeList.isEmpty()) {
-                if(workHoursService.isBreakActive(employeeList.get(0).getUuid())) {
-                    workHoursService.endBreak(employeeList.get(0).getUuid());
+            Optional<List<Employee>> employeeList = employeeRepository.findEmployeeByDeviceIdMac(macAddress);
+            if(employeeList.isPresent()) {
+                if(workHoursService.isBreakActive(employeeList.get().get(0).getUuid())) {
+                    workHoursService.endBreak(employeeList.get().get(0).getUuid());
                 } else {
-                    workHoursService.addNewEntry(employeeList.get(0).getUuid(), WorkHourType.WORK);
+                    workHoursService.addNewEntry(employeeList.get().get(0).getUuid(), WorkHourType.WORK);
                 }
             }
         }
         for (String macAddress: macRequest.getOldDevices()) {
-            List<Employee> employeeList = employeeRepository.findEmployeeByDeviceIdMac(macAddress);
+            Optional<List<Employee>> employeeList = employeeRepository.findEmployeeByDeviceIdMac(macAddress);
             if(!employeeList.isEmpty()) {
-                if(workHoursService.isFirstBreak(employeeList.get(0).getUuid())) {
-                    workHoursService.addNewBreak(employeeList.get(0).getUuid());
-                } else if (!workHoursService.isBreakActive(employeeList.get(0).getUuid())){
-                    workHoursService.endEntry(employeeList.get(0).getUuid());
+                if(workHoursService.isFirstBreak(employeeList.get().get(0).getUuid())) {
+                    workHoursService.addNewBreak(employeeList.get().get(0).getUuid());
+                } else if (!workHoursService.isBreakActive(employeeList.get().get(0).getUuid())){
+                    workHoursService.endEntry(employeeList.get().get(0).getUuid());
                 }
             }
         }

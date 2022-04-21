@@ -133,7 +133,7 @@ public class EmployeeService {
     public void deleteDevice(String id, Device deviceId) {
         Employee employee = employeeRepository.findById(id).orElseThrow(() -> new EmployeeNotFoundException("id: " + id));
         if (employee.getDeviceId().contains(deviceId)) {
-            employee.getDeviceId().add(deviceId);
+            employee.getDeviceId().remove(deviceId);
             employeeRepository.save(employee);
         }
         throw new DeviceNotFoundException(deviceId.getMac());
@@ -151,6 +151,7 @@ public class EmployeeService {
     }
 
     public Employee findEmployeeByDeviceId(String deviceId) {
-        return employeeRepository.findEmployeeByDeviceIdContaining(deviceId);
+        List<Employee> employeeDevices = employeeRepository.findEmployeeByDeviceIdMac(deviceId).orElseThrow(() -> new DeviceNotFoundException(deviceId));
+        return employeeDevices.get(0);
     }
 }

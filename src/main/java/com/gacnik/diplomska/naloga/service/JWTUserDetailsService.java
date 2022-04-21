@@ -20,7 +20,6 @@ public class JWTUserDetailsService implements UserDetailsService {
             final Employee employee = employeeService.getEmployeeByEmailAuth(s);
             return new User(employee.getEmail(), employee.getPassword(),
                     employee.getRoles());
-
         } else {
             throw new UsernameNotFoundException("User not found with username: " + s);
         }
